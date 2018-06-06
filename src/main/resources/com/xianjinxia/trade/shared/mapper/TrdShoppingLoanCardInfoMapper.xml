@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingLoanCardInfoMapper">
+    <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdShoppingLoanCardInfo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="shopping_product_order_id" property="shoppingProductOrderId" jdbcType="BIGINT"/>
+        <result column="third_order_id" property="thirdOrderId" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="product_unit_price" property="productUnitPrice" jdbcType="INTEGER" />
+        <result column="card_no" property="cardNo" jdbcType="VARCHAR"/>
+        <result column="card_password" property="cardPassword" jdbcType="VARCHAR"/>
+        <result column="card_deadline" property="cardDeadline" jdbcType="VARCHAR"/>
+        <result column="recycle" property="recycle" jdbcType="VARCHAR"/>
+        <result column="recycle_time" property="recycleTime" jdbcType="TIMESTAMP"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="created_user" property="createdUser" jdbcType="VARCHAR"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_user" property="updatedUser" jdbcType="VARCHAR"/>
+        <result column="data_valid" property="dataValid" jdbcType="BIT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,shopping_product_order_id,third_order_id,product_name,
+        card_no,card_password,card_deadline,recycle,recycle_time,created_at,created_user,
+        updated_at,updated_user,data_valid,product_unit_price
+    </sql>
+    <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder" useGeneratedKeys="true"
+            keyProperty="id">
+    insert into trd_shoppping_loan_card_info
+    (id,shopping_product_order_id,third_order_id,product_name,
+    card_no,card_password,card_deadline,recycle,recycle_time,created_at,created_user,
+    updated_at,updated_user,data_valid,product_unit_price)
+    values (#{id,jdbcType=BIGINT}, #{shoppingProductOrderId,jdbcType=BIGINT}, #{thirdOrderId,jdbcType=VARCHAR},
+    #{productName,jdbcType=VARCHAR}, #{cardNo,jdbcType=VARCHAR}, #{cardPassword,jdbcType=VARCHAR},#{cardDeadline,jdbcType=VARCHAR},
+    #{recycle,jdbcType=VARCHAR}, #{recycleTime,jdbcType=TIMESTAMP},
+    now(),#{createdUser,jdbcType=VARCHAR}, now(), #{updatedUser,jdbcType=VARCHAR},1, #{productUnitPrice,jdbcType=INTEGER}
+    )
+    </insert>
+
+    <select id="selectByOrderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from trd_shoppping_loan_card_info
+        where shopping_product_order_id = #{shoppingProductOrderId,jdbcType=BIGINT}
+    </select>
+	<select id="selectByNoAndPassword" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from trd_shoppping_loan_card_info
+        where card_no = #{cardNo,jdbcType=VARCHAR} and card_password=#{cardPassword,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

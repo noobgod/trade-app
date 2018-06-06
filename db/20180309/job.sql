@@ -1,0 +1,2 @@
+INSERT INTO `tb_job_desc` (`job_name`, `job_desc`, `job_cron`, `job_url`, `request_encoding`, `request_method`, `call_type`, `create_time`,`version`, `job_status`, `is_handle`) VALUES
+('TRADE-PET-BUY-IN-BLOCK', '宠物入链定时任务', '0 * * * * ?', 'http://TRADE-APP/service/pet/settle/handle', 'UTF-8', 'POST', 'EUREKA', NOW(),'1', '0', '0');

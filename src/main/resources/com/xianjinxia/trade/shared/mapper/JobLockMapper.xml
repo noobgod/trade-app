@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.JobLockMapper">
+	<resultMap id="baseResultMap" type="com.xianjinxia.trade.shared.domain.JobLock">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="job_name" jdbcType="VARCHAR" property="jobName"/>
+		<result column="uk_token" jdbcType="BIGINT" property="ukToken"/>
+		<result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+		<result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+	</resultMap>
+
+
+	<insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.JobLock" useGeneratedKeys="true" keyProperty="id">
+		insert into trd_job_lock (job_name,uk_token,created_time,updated_time)
+		values (#{jobName,jdbcType=VARCHAR},#{ukToken,jdbcType=BIGINT},now(),now())
+	</insert>
+	
+	<select id="selectByJobName" resultMap="baseResultMap">
+	 select id,job_name,uk_token,created_time,updated_time from trd_job_lock where job_name=#{jobName} and uk_token=0
+	</select>
+	
+	
+	<update id="update">
+	    update trd_job_lock set uk_token=#{ukToken},updated_time=now() where job_name=#{jobName} and uk_token=0 and id=#{id}
+	</update>
+	
+
+</mapper>

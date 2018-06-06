@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.PlatformFeeDetailMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.PlatformFeeDetail">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="fee_name" jdbcType="VARCHAR" property="feeName" />
+    <result column="fee_type" jdbcType="VARCHAR" property="feeType" />
+    <result column="collect_mode" jdbcType="VARCHAR" property="collectMode" />
+    <result column="fee_amount" jdbcType="INTEGER" property="feeAmount" />
+    <result column="loan_order_id" jdbcType="BIGINT" property="loanOrderId" />
+    <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fee_name, fee_type, collect_mode, fee_amount, loan_order_id, created_user, created_time, 
+    updated_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_platform_fee_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.PlatformFeeDetail">
+    insert into trd_platform_fee_detail (id, fee_name, fee_type, 
+      collect_mode, fee_amount, loan_order_id, 
+      created_user, created_time, updated_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{feeName,jdbcType=VARCHAR}, #{feeType,jdbcType=VARCHAR}, 
+      #{collectMode,jdbcType=VARCHAR}, #{feeAmount,jdbcType=INTEGER}, #{loanOrderId,jdbcType=BIGINT}, 
+      #{createdUser,jdbcType=VARCHAR}, now(), now()
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.xianjinxia.trade.shared.domain.PlatformFeeDetail">
+    update trd_platform_fee_detail
+    set fee_name = #{feeName,jdbcType=VARCHAR},
+      fee_type = #{feeType,jdbcType=VARCHAR},
+      collect_mode = #{collectMode,jdbcType=VARCHAR},
+      fee_amount = #{feeAmount,jdbcType=INTEGER},
+      loan_order_id = #{loanOrderId,jdbcType=BIGINT},
+      created_user = #{createdUser,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

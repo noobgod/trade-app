@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.LoanOrderMapper">
+    <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.LoanOrder">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="biz_seq_no" jdbcType="VARCHAR" property="bizSeqNo" />
+        <result column="uk_token" jdbcType="VARCHAR" property="ukToken" />
+        <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+        <result column="order_amount" jdbcType="INTEGER" property="orderAmount" />
+        <result column="fee_amount" jdbcType="INTEGER" property="feeAmount" />
+        <result column="payment_amount" jdbcType="INTEGER" property="paymentAmount" />
+        <result column="repayment_amount" jdbcType="INTEGER" property="repaymentAmount" />
+        <result column="interest_amount" jdbcType="INTEGER" property="interestAmount" />
+        <result column="periods" jdbcType="INTEGER" property="periods" />
+        <result column="product_id" jdbcType="BIGINT" property="productId" />
+        <result column="product_category" jdbcType="INTEGER" property="productCategory" />
+        <result column="user_bank_card_id" jdbcType="BIGINT" property="userBankCardId" />
+        <result column="bank_name" jdbcType="VARCHAR" property="bankName" />
+        <result column="last_four_bank_card_no" jdbcType="VARCHAR" property="lastFourBankCardNo" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="user_type" jdbcType="BIT" property="userType" />
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="status" jdbcType="VARCHAR" property="status" />
+        <result column="source" jdbcType="VARCHAR" property="source" />
+        <result column="terminal" jdbcType="VARCHAR" property="terminal" />
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+        <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+        <result column="data_valid" jdbcType="BIT" property="dataValid" />
+        <result column="trace_no" jdbcType="VARCHAR" property="traceNo" />
+        <result column="loan_usage" jdbcType="VARCHAR" property="loanUsage" />
+        <result column="loan_time" jdbcType="TIMESTAMP" property="loanTime" />
+        <result column="review_fail_time" jdbcType="TIMESTAMP" property="reviewFailTime" />
+        <result column="is_depository" jdbcType="VARCHAR" property="isDepository" />
+        <result column="term_unit" jdbcType="VARCHAR" property="termUnit" />
+        <result column="merchant_no" jdbcType="VARCHAR" property="merchantNo" />
+        <result column="term_rate" jdbcType="DECIMAL" property="termRate" />
+    </resultMap>
+
+    <resultMap id="BaseUnfreezeResultMap" type="com.xianjinxia.trade.app.response.UnfreezeOrdersResponse">
+        <result column="biz_seq_no" jdbcType="VARCHAR" property="bizSeqNo" />
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    id, user_id, biz_seq_no, uk_token, order_type, order_amount, fee_amount, payment_amount,
+    repayment_amount, interest_amount, periods, product_id, product_category, user_bank_card_id,
+    bank_name, last_four_bank_card_no, remark, user_type, user_phone, user_name, status,
+    source, terminal, created_time, created_user, updated_time, data_valid, trace_no,
+    loan_usage, loan_time, review_fail_time,is_depository,term_unit,term_rate,merchant_no
+  </sql>
+
+    <select id="selectByBizNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where biz_seq_no = #{bizSeqNo,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectSelective" parameterType="com.xianjinxia.trade.shared.domain.LoanOrder" resultType="com.xianjinxia.trade.app.dto.LoanOrderDto">
+        select
+        id,
+        user_id userId,
+        order_amount orderAmount,
+        interest_amount interestAmount,
+        order_type orderType,
+        created_time createdTime,
+        if (`status` in(40), 1, 0) isOverdue,
+        status,
+        case
+        when `status` in (30,10,0)  then
+        '审核中'
+        when `status` in ((-3),(-30),(-11),(-12)) then
+        '审核失败'
+		when `status` in (11,31) then
+        '待放款'
+        when `status` in(21,22)  then
+        '待还款'
+        when `status` = -10 then
+        '放款失败'
+        when `status` = 50 then
+        '已还清'
+        when `status` = 40 then
+        '已逾期'
+		when `status` = -22 then
+        '/'
+        else
+        ''
+        end statusText
+        from
+        trd_loan_order
+        where user_id=#{userId}
+        and data_valid =1
+        and product_category=#{productCategory}
+        <if test="merchantNo != null and merchantNo != ''">
+            and merchant_no = #{merchantNo}
+        </if>
+        order by created_time desc
+    </select>
+
+
+    <select id="getByUserIdAndOrderId" parameterType="com.xianjinxia.trade.shared.domain.LoanOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where 1=1
+        and user_id=#{userId}
+        and id=#{id}
+        <if test="merchantNo != null and merchantNo != ''">
+            and merchant_no = #{merchantNo}
+        </if>
+        and data_valid=1
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.LoanOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_loan_order (user_id, biz_seq_no,uk_token,
+      order_type, order_amount, fee_amount,
+      payment_amount, repayment_amount,interest_amount, periods,
+      product_id,product_category,user_bank_card_id,bank_name,last_four_bank_card_no,remark,
+      user_type, user_phone, user_name,
+      status, source, terminal,created_time, updated_time,
+      trace_no , loan_usage, loan_time , review_fail_time,is_depository,
+      term_unit,term_rate,merchant_no,speed_card_id)
+    values (#{userId,jdbcType=BIGINT}, #{bizSeqNo,jdbcType=VARCHAR},#{ukToken,jdbcType=VARCHAR},
+      #{orderType,jdbcType=VARCHAR}, #{orderAmount,jdbcType=INTEGER}, #{feeAmount,jdbcType=INTEGER},
+      #{paymentAmount,jdbcType=INTEGER}, #{repaymentAmount,jdbcType=INTEGER},  #{interestAmount,jdbcType=INTEGER},
+      #{periods,jdbcType=INTEGER}, #{productId,jdbcType=BIGINT},#{productCategory,jdbcType=INTEGER},
+      #{userBankCardId,jdbcType=BIGINT},#{bankName,jdbcType=VARCHAR},#{lastFourBankCardNo,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},
+      #{userType,jdbcType=BIT}, #{userPhone,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
+      #{status,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{terminal,jdbcType=VARCHAR},
+      NOW(),NOW(),#{traceNo,jdbcType=VARCHAR}, #{loanUsage,jdbcType=VARCHAR}, #{loanTime,jdbcType=TIMESTAMP}, #{reviewFailTime,jdbcType=TIMESTAMP},#{isDepository,jdbcType=VARCHAR},
+      #{termUnit,jdbcType=VARCHAR},#{termRate,jdbcType=DECIMAL},#{merchantNo,jdbcType=VARCHAR},#{speedCardId,jdbcType=VARCHAR})
+  </insert>
+
+
+    <update id="updateOrderStatus">
+    update trd_loan_order set
+    status=#{newStatus,jdbcType=VARCHAR},updated_time=now(),uk_token = #{bizSeqNo,jdbcType=VARCHAR}
+    where biz_seq_no =#{bizSeqNo,jdbcType=VARCHAR} and status=#{oldStatus,jdbcType=VARCHAR}
+  </update>
+    <update id="updateOrderStatusAndRemark">
+    update trd_loan_order set
+    status=#{newStatus,jdbcType=VARCHAR},updated_time=now(),uk_token = #{bizSeqNo,jdbcType=VARCHAR},remark=#{remark,jdbcType=VARCHAR}
+    where biz_seq_no =#{bizSeqNo,jdbcType=VARCHAR} and status=#{oldStatus,jdbcType=VARCHAR}
+  </update>
+
+    <update id="updateOrderReviewFailTime">
+        update trd_loan_order set
+        review_fail_time=#{reviewFailTime,jdbcType=TIMESTAMP},updated_time=now()
+        where biz_seq_no =#{bizSeqNo,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateStatByIdAndStat">
+       update trd_loan_order set status=#{newStatus,jdbcType=VARCHAR} , updated_time=now()
+       where id = #{id,jdbcType=BIGINT} and status=#{oldStatus,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getUserMoneyById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select user_id,order_amount,biz_seq_no,trace_no,product_category from trd_loan_order where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"/>
+        from  trd_loan_order where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getTraceNoById" parameterType="java.lang.Long" resultType="java.lang.String">
+      select trace_no from trd_loan_order where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <select id="selectNonUltimateOrder" resultType="java.lang.Integer">
+        select count(1)
+        from trd_loan_order where user_id = #{userId,jdbcType=BIGINT} and status in
+        <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+    </select>
+
+    <select id="getLastLoanOrderByUserIdAndProductCategory"  resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from trd_loan_order
+        where user_id=#{userId,jdbcType=BIGINT}
+        and product_category = #{productCategory,jdbcType=INTEGER}
+        order by id desc limit 0,1
+    </select>
+
+    <select id="getLastLoanOrderByUserIdAndMerchantNo" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from trd_loan_order
+        where user_id=#{userId,jdbcType=BIGINT}
+        and merchant_no=#{merchantNo,jdbcType=VARCHAR}
+        order by id desc limit 0,1
+    </select>
+
+
+    <select id="selectUserOrderByStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where user_id = #{userId,jdbcType=BIGINT} and status in
+        <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+            ${item}
+        </foreach> order by id desc limit 0,1
+    </select>
+
+    <select id="selectLoanOrderById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where 1=1 and id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectLoanOrderListByStatus"  resultType="com.xianjinxia.trade.app.dto.ManualReviewLoanOrderDto">
+        select
+        biz_seq_no  bizSeqNo ,
+        status
+        from
+        trd_loan_order
+        where status = #{status,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectLoanOrderByBizSeqNoAndStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where 1=1 and biz_seq_no =#{bizSeqNo,jdbcType=VARCHAR}  and  status =  #{status,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectListByStatus" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_loan_order
+        where status=#{status} and data_valid=1
+    </select>
+
+    <update id="updateOrderLoanTime">
+        update trd_loan_order set
+        loan_time=#{loanTime,jdbcType=TIMESTAMP},updated_time=now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="getUserIdByOrderBizSeqNo" parameterType="java.lang.String" resultType="java.lang.Long">
+        select user_id from trd_loan_order where biz_seq_no=#{bizSeqNo}
+    </select>
+
+    <select id="getOrderApplyList" parameterType="com.xianjinxia.trade.app.request.OrderApplyReq" resultType="com.xianjinxia.trade.app.dto.OrderDetailDto">
+
+        select
+            id,
+            biz_seq_no loanId,
+            user_name userName,
+            user_phone userPhone,
+            order_amount loanMomey,
+            periods term,
+            status,
+        case
+            when `status` in (30,10,0)  then
+            '审核中'
+            when `status` in ((-3),(-30),(-11),(-12)) then
+            '审核失败'
+            when `status` in (11,31) then
+            '待放款'
+            when `status` in(21,22)  then
+            '待还款'
+            when `status` = -10 then
+            '放款失败'
+            when `status` = 50 then
+            '已还清'
+            when `status` = 40 then
+            '已逾期'
+            when `status` = -22 then
+            '/'
+            else
+            ''
+             end orderStatus,
+             product_id productId,
+             created_time applyTime,
+             loan_time loanTime,
+             updated_time updateTime
+        from trd_loan_order
+        <where>
+            data_valid =1
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and user_phone = #{userPhone}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="loanId != null and loanId != ''">
+                and biz_seq_no = #{loanId}
+            </if>
+            <if test="applyStartTime != null and applyStartTime != ''">
+                and create_time >= #{applyStartTime}
+            </if>
+            <if test="applyEndTime != null and applyEndTime != ''">
+                <![CDATA[and create_time <= #{applyEndTime}]]>
+            </if>
+            <if test="loanStartTime != null and loanStartTime != ''">
+                and loan_time >= #{loanStartTime}
+            </if>
+            <if test="loanEndTime != null and loanEndTime != ''">
+                <![CDATA[and loan_time <= #{loanEndTime}]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="getLoanAuditList" parameterType="com.xianjinxia.trade.app.request.OrderApplyReq" resultType="com.xianjinxia.trade.app.dto.OrderDetailDto">
+        select
+            id,
+            user_id userId,
+            biz_seq_no loanId,
+            user_name userName,
+            user_phone userPhone,
+            order_amount loanMomey,
+            periods term,
+            status,
+        case
+            when `status` in (30,10,0)  then
+            '审核中'
+            when `status` in ((-3),(-30),(-11),(-12)) then
+            '审核失败'
+            when `status` in (11,31) then
+            '待放款'
+            when `status` in(21,22)  then
+            '待还款'
+            when `status` = -10 then
+            '放款失败'
+            when `status` = 50 then
+            '已还清'
+            when `status` = 40 then
+            '已逾期'
+            when `status` = -22 then
+            '/'
+            else
+            ''
+            end orderStatus,
+            product_id productId,
+            created_time applyTime,
+            loan_time loanTime,
+            updated_time updateTime
+        from trd_loan_order
+        <where>
+            data_valid =1
+            and status = '30'
+            <if test="userName != null and userName != ''">
+                and user_name = #{userName}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and user_phone = #{userPhone}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="loanId != null and loanId != ''">
+                and biz_seq_no = #{loanId}
+            </if>
+            <if test="applyStartTime != null and applyStartTime != ''">
+                and create_time >= #{applyStartTime}
+            </if>
+            <if test="applyEndTime != null and applyEndTime != ''">
+                <![CDATA[and create_time <= #{applyEndTime}]]>
+            </if>
+            <if test="loanStartTime != null and loanStartTime != ''">
+                and loan_time >= #{loanStartTime}
+            </if>
+            <if test="loanEndTime != null and loanEndTime != ''">
+                <![CDATA[and loan_time <= #{loanEndTime}]]>
+            </if>
+        </where>
+
+    </select>
+
+
+    <select id="getCountByStatus" parameterType="java.lang.String" resultType="java.lang.Integer">
+          select count(*) from trd_loan_order where data_valid = 1
+          and status = #{status}
+    </select>
+
+    <select id="getSumMoneyByStatus" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select sum(payment_amount) from trd_loan_order where data_valid = 1 and status = #{status}
+    </select>
+
+
+    <select id="selectUnfreezeOrders" resultMap="BaseUnfreezeResultMap">
+        select
+          biz_seq_no,user_phone
+        from trd_loan_order
+        where product_id = #{productId,jdbcType=BIGINT} and status in
+        <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+        and Date(review_fail_time) = #{reviewFailTime,jdbcType=TIMESTAMP}
+        order by id desc
+    </select>
+
+    <update id="updateOrderStatusById">
+        update trd_loan_order
+        set status=#{newStatus},
+        updated_time=now()
+        <if test="reviewFailTime != null">
+            ,review_fail_time=#{reviewFailTime,jdbcType=TIMESTAMP}
+        </if>
+        where id=#{id}
+        and status=#{oldStatus}
+    </update>
+
+</mapper>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingLogisticsOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdShoppingLogisticsOrder" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="shopping_loan_order_id" property="shoppingLoanOrderId" jdbcType="BIGINT" />
+    <result column="receive_province" property="receiveProvince" jdbcType="VARCHAR" />
+    <result column="receive_city" property="receiveCity" jdbcType="VARCHAR" />
+    <result column="receive_area" property="receiveArea" jdbcType="VARCHAR" />
+    <result column="receive_addr" property="receiveAddr" jdbcType="VARCHAR" />
+    <result column="receive_post_no" property="receivePostNo" jdbcType="VARCHAR" />
+    <result column="receive_username" property="receiveUsername" jdbcType="VARCHAR" />
+    <result column="receive_mobile" property="receiveMobile" jdbcType="VARCHAR" />
+    <result column="logistics_company" property="logisticsCompany" jdbcType="VARCHAR" />
+    <result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR" />
+    <result column="logistics_phone" property="logisticsPhone" jdbcType="VARCHAR" />
+    <result column="logistics_price" property="logisticsPrice" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="created_user" property="createdUser" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="VARCHAR" />
+    <result column="data_valid" property="dataValid" jdbcType="BIT" />
+    <result column="send_province" property="sendProvince" jdbcType="VARCHAR" />
+    <result column="send_city" property="sendCity" jdbcType="VARCHAR" />
+    <result column="send_area" property="sendArea" jdbcType="VARCHAR" />
+    <result column="send_addr" property="sendAddr" jdbcType="VARCHAR" />
+    <result column="send_post_no" property="sendPostNo" jdbcType="VARCHAR" />
+    <result column="send_username" property="sendUsername" jdbcType="VARCHAR" />
+    <result column="send_mobile" property="sendMobile" jdbcType="VARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+    <result column="vender_id" property="venderId" jdbcType="VARCHAR" />
+    <result column="vender_name" property="venderName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, shopping_loan_order_id, receive_province, receive_city, receive_area, receive_addr, 
+    receive_post_no, receive_username, receive_mobile, logistics_company, logistics_no, 
+    logistics_phone, status, created_at, created_user, updated_at, updated_user, data_valid, 
+    send_province, send_city, send_area, send_addr, send_post_no, send_username, send_mobile, 
+    order_type, send_time, logistics_price, vender_id, vender_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_logistics_order
+    where id = #{id,jdbcType=BIGINT}
+    and data_valid = 1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trd_shopping_logistics_order
+    where id = #{id,jdbcType=BIGINT}
+    and data_valid = 1
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingLogisticsOrder" >
+    insert into trd_shopping_logistics_order (id, shopping_loan_order_id, receive_province, 
+      receive_city, receive_area, receive_addr, 
+      receive_post_no, receive_username, receive_mobile, 
+      logistics_company, logistics_no, logistics_phone, 
+      status, created_at, created_user, 
+      updated_at, updated_user, data_valid, 
+      send_province, send_city, send_area, 
+      send_addr, send_post_no, send_username, 
+      send_mobile, order_type)
+    values (#{id,jdbcType=BIGINT}, #{shoppingLoanOrderId,jdbcType=BIGINT}, #{receiveProvince,jdbcType=VARCHAR},
+      #{receiveCity,jdbcType=VARCHAR}, #{receiveArea,jdbcType=VARCHAR}, #{receiveAddr,jdbcType=VARCHAR}, 
+      #{receivePostNo,jdbcType=VARCHAR}, #{receiveUsername,jdbcType=VARCHAR}, #{receiveMobile,jdbcType=VARCHAR}, 
+      #{logisticsCompany,jdbcType=VARCHAR}, #{logisticsNo,jdbcType=VARCHAR}, #{logisticsPhone,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{createdUser,jdbcType=VARCHAR}, 
+      now(), #{updatedUser,jdbcType=VARCHAR}, 1, 
+      #{sendProvince,jdbcType=VARCHAR}, #{sendCity,jdbcType=VARCHAR}, #{sendArea,jdbcType=VARCHAR}, 
+      #{sendAddr,jdbcType=VARCHAR}, #{sendPostNo,jdbcType=VARCHAR}, #{sendUsername,jdbcType=VARCHAR}, 
+      #{sendMobile,jdbcType=VARCHAR}, #{orderType,jdbcType=VARCHAR})
+  </insert>
+ 
+  <update id="updateLogisticsOrderStatus">
+      update trd_shopping_logistics_order
+      set
+        status = #{newStatus},
+        updated_at = now()
+      where
+        shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+
+
+  <update id="updateLogisticsOrderToDeliver">
+    update trd_shopping_logistics_order
+    set
+      vender_id = #{venderId,jdbcType=VARCHAR},
+      vender_name = #{venderName,jdbcType=VARCHAR},
+      logistics_company = #{logisticsCompany,jdbcType=VARCHAR},
+      logistics_no = #{logisticsNo,jdbcType=VARCHAR},
+      send_post_no = #{sendPostNo,jdbcType=VARCHAR},
+      logistics_price= #{logisticsPrice,jdbcType=INTEGER},
+      vender_id = #{venderId,jdbcType=VARCHAR},
+      vender_name = #{venderName,jdbcType=VARCHAR},
+      <if test="status != null and status != ''">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      updated_at = now()
+    where
+      id = #{id,jdbcType=BIGINT}
+      and data_valid = 1
+
+  </update>
+
+  <select id="getByShoppingLoanOrderId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_logistics_order
+    where shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT} limit 0,1
+  </select>
+  
+  
+  <select id="selectByEndTimeAndStatus" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_logistics_order where data_valid = 1 and DATE_FORMAT(send_time,'%Y-%m-%d') = #{endTime,jdbcType=VARCHAR} and status = #{status,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectPage" resultMap="BaseResultMap" parameterType="com.xianjinxia.trade.shopping.response.bgd.ShoppingLogisticsOrderDto">
+    select
+    <include refid="Base_Column_List" />
+    from trd_shopping_logistics_order
+    <where>
+      data_valid = 1
+      and status in (11,31,24,25)
+      <if test="receiveUsername != null and receiveUsername != ''">
+        and receive_username like '%${receiveUsername}%'
+      </if>
+      <if test="receiveMobile != null and receiveMobile != ''">
+        and receive_mobile like '%${receiveMobile}%'
+      </if>
+    </where>
+    order by created_at desc
+  </select>
+
+  <select id="getByShoppingLoanOrderIdAndNameMobile" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from trd_shopping_logistics_order
+    <where>
+      shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT}
+      <if test="receiveUsername != null and receiveUsername != ''">
+        and receive_username like '%${receiveUsername}%'
+      </if>
+      <if test="receiveMobile != null and receiveMobile != ''">
+        and receive_mobile like '%${receiveMobile}%'
+      </if>
+    </where>
+    limit 0,1
+  </select>
+</mapper>

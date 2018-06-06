@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.PaymentOrderMapper">
+    <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.PaymentOrder">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="payment_amount" jdbcType="INTEGER" property="paymentAmount"/>
+        <result column="payment_seq_no" jdbcType="VARCHAR" property="paymentSeqNo"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="created_user" jdbcType="VARCHAR" property="createdUser"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="data_valid" jdbcType="TINYINT" property="dataValid"/>
+        <result column="finance_channel_flag" jdbcType="VARCHAR" property="financeChannelFlag"/>
+        <result column="rcv_bank_card_no" jdbcType="VARCHAR" property="rcvBankCardNo"/>
+        <result column="rcv_bank_union_no" jdbcType="VARCHAR" property="rcvBankUnionNo"/>
+        <result column="rcv_bank_acct_name" jdbcType="VARCHAR" property="rcvBankAcctName"/>
+        <result column="payment_order_no" jdbcType="VARCHAR" property="paymentOrderNo"/>
+        <result column="ret_msg" jdbcType="VARCHAR" property="retMsg"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="payment_remark" jdbcType="VARCHAR" property="paymentRemark"/>
+        <result column="payment_order_type" jdbcType="INTEGER" property="paymentOrderType"/>
+        <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+        <result column="trd_order_id" jdbcType="BIGINT" property="trdOrderId"/>
+        <result column="payment_channel" jdbcType="VARCHAR" property="paymentChannel"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, payment_amount, payment_seq_no, created_time, created_user, updated_time, data_valid, 
+    finance_channel_flag, rcv_bank_card_no, rcv_bank_union_no, rcv_bank_acct_name, payment_order_no, 
+    ret_msg, status, payment_remark, payment_time, trd_order_id, payment_channel
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_payment_order
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="selectByTradeOrderId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_payment_order
+        where trd_order_id = #{trdOrderId,jdbcType=BIGINT}
+        and payment_order_type=#{paymentOrderType,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.PaymentOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_payment_order (payment_amount, payment_seq_no, 
+      created_time, created_user, updated_time, 
+      data_valid, finance_channel_flag, rcv_bank_card_no, 
+      rcv_bank_union_no, rcv_bank_acct_name, payment_order_no, 
+      ret_msg, status, payment_remark, payment_order_type,
+      payment_time, trd_order_id, payment_channel
+      )
+    values (#{paymentAmount,jdbcType=INTEGER}, #{paymentSeqNo,jdbcType=VARCHAR}, 
+      NOW(), #{createdUser,jdbcType=VARCHAR}, NOW(), 
+      #{dataValid,jdbcType=TINYINT}, #{financeChannelFlag,jdbcType=VARCHAR}, #{rcvBankCardNo,jdbcType=VARCHAR},
+      #{rcvBankUnionNo,jdbcType=VARCHAR}, #{rcvBankAcctName,jdbcType=VARCHAR}, #{paymentOrderNo,jdbcType=VARCHAR}, 
+      #{retMsg,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{paymentRemark,jdbcType=VARCHAR},#{paymentOrderType,jdbcType=INTEGER},
+      #{paymentTime,jdbcType=TIMESTAMP}, #{trdOrderId,jdbcType=BIGINT}, #{paymentChannel,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPaymentSeqNoAndStat">
+      update trd_payment_order
+      set
+        status=#{newStatus,jdbcType=VARCHAR},
+        ret_msg = #{record.retMsg,jdbcType=VARCHAR},
+        payment_order_no=#{record.paymentOrderNo,jdbcType=VARCHAR},
+        payment_time=#{record.paymentTime,jdbcType=TIMESTAMP}
+      where
+        payment_seq_no = #{record.paymentSeqNo,jdbcType=VARCHAR}
+        and status=#{record.status,jdbcType=VARCHAR}
+
+  </update>
+
+  <select id="getLoanOrderIdAndStatusByPaymentSeqNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select
+        trd_order_id,status
+      from
+        trd_payment_order
+      where
+        payment_seq_no=#{paymentSeqNo,jdbcType=VARCHAR}
+  </select>
+</mapper>

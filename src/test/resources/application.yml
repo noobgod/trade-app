@@ -1,0 +1,56 @@
+
+
+spring:
+    application:
+        name: trade-app
+    mvc:
+        favicon:
+            enabled: false
+    thymeleaf:
+        mode: XHTML
+    profiles:
+        active: local
+
+
+
+server:
+  context-path: /
+  tomcat:
+    accept-count: 1000
+    max-threads: 500
+    min-spare-threads: 300
+    max-connections: 1000
+
+
+
+mybatis:
+    configuration:
+        mapUnderscoreToCamelCase: true
+
+
+eureka:
+  client:
+    serviceUrl:
+        defaultZone: http://peer1:8761/eureka/,http://peer2:8762/eureka/
+    enabled: false
+
+# ===================================================================
+# trade-app specific properties
+# ===================================================================
+
+
+ext:
+    swagger:
+        title: trade API
+        description: trade API documentation
+        version: 0.0.1
+        termsOfServiceUrl:
+        contactName:
+        contactUrl:
+        contactEmail:
+        license:
+        licenseUrl:
+
+
+
+

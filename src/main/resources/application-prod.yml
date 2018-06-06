@@ -1,0 +1,42 @@
+
+spring:
+    datasource:
+        druid:
+            url: jdbc:mysql://rm-bp1285zshqjvjgmd4.mysql.rds.aliyuncs.com:3306/trd?useUnicode=true&characterEncoding=UTF-8
+            username: user_re
+            password: 5uX7mV5T0MoJc8ID
+            type: com.alibaba.druid.pool.DruidDataSource
+            driver-class-name: com.mysql.jdbc.Driver
+            initial-size: 200
+            max-active: 1000
+            min-idle: 5
+            max-wait: 60000
+            validation-query: SELECT 1
+            test-on-borrow: false
+            test-on-return: false
+            test-while-idle: true
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 25200000
+            remove-abandoned: true
+            remove-abandoned-timeout: 1800
+            logAbandoned: true
+            filters: stat
+            pool-prepared-statement: true
+            max-open-prepared-statements: 100
+
+server:
+    port: 8080
+
+ext:
+    swagger:
+      enabled: false
+    activeMqConfiguration:
+      brokerUrl: failover:(tcp://10.28.143.63:61616?wireFormat.maxInactivityDuration=0,tcp://10.80.59.184:61616?wireFormat.maxInactivityDuration=0)
+      queueTableName: trd_mq_message
+      queueName: trd_queue
+      queueMaxCount: 50000
+      isCreateTable: 2
+    oldCashmanServerAddressConfig:
+      serverAddress: super.xianjinxia.com
+    smsConfig:
+      url: message.xianjinxia.com/uninoty/api/message/send-by-type

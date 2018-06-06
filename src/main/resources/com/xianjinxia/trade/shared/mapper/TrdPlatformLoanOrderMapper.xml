@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdPlatformLoanOrderMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdPlatformLoanOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="uk_token" jdbcType="VARCHAR" property="ukToken" />
+    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+    <result column="order_amount" jdbcType="INTEGER" property="orderAmount" />
+    <result column="loan_time" jdbcType="TIMESTAMP" property="loanTime" />
+    <result column="fee_amount" jdbcType="INTEGER" property="feeAmount" />
+    <result column="interest_amount" jdbcType="INTEGER" property="interestAmount" />
+    <result column="payment_amount" jdbcType="INTEGER" property="paymentAmount" />
+    <result column="repayment_amount" jdbcType="INTEGER" property="repaymentAmount" />
+    <result column="term" jdbcType="INTEGER" property="term" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="product_category" jdbcType="INTEGER" property="productCategory" />
+    <result column="user_bank_card_id" jdbcType="BIGINT" property="userBankCardId" />
+    <result column="bank_name" jdbcType="VARCHAR" property="bankName" />
+    <result column="bank_card_no_last_four" jdbcType="VARCHAR" property="bankCardNoLastFour" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="terminal" jdbcType="VARCHAR" property="terminal" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="data_valid" jdbcType="BIT" property="dataValid" />
+    <result column="trace_no" jdbcType="VARCHAR" property="traceNo" />
+    <result column="service_company" jdbcType="VARCHAR" property="serviceCompany" />
+    <result column="is_reloan" jdbcType="TINYINT" property="isReloan" />
+    <result column="retry_times" jdbcType="INTEGER" property="retryTimes" />
+    <result column="next_retry_time" jdbcType="TIMESTAMP" property="nextRetryTime" />
+    <result column="term_unit" jdbcType="VARCHAR" property="termUnit" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="user_idcard_type" jdbcType="VARCHAR" property="userIdcardType" />
+    <result column="user_idcard_no" jdbcType="VARCHAR" property="userIdcardNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, order_no, uk_token, order_type, order_amount, loan_time, fee_amount,interest_amount,
+    payment_amount, repayment_amount, term, product_name, product_category, user_bank_card_id,
+    bank_name, bank_card_no_last_four, remark, user_phone, user_name, status, source, 
+    terminal, created_time, created_user, updated_time, data_valid, trace_no, service_company, 
+    is_reloan, retry_times,next_retry_time, term_unit, product_code, user_idcard_type, user_idcard_no
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_platform_loan_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdPlatformLoanOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_platform_loan_order (id, user_id, order_no, 
+      uk_token, order_type, order_amount, 
+      loan_time, fee_amount,interest_amount, payment_amount,
+      repayment_amount, term, product_name,
+      product_category, user_bank_card_id, bank_name, 
+      bank_card_no_last_four, remark, user_phone, 
+      user_name, status, source, 
+      terminal, created_time, created_user, 
+      updated_time, data_valid, trace_no, 
+      service_company, is_reloan, retry_times,next_retry_time,
+      term_unit, product_code, user_idcard_type, 
+      user_idcard_no)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, 
+      #{ukToken,jdbcType=VARCHAR}, #{orderType,jdbcType=VARCHAR}, #{orderAmount,jdbcType=INTEGER}, 
+      #{loanTime,jdbcType=TIMESTAMP}, #{feeAmount,jdbcType=INTEGER},#{interestAmount,jdbcType=INTEGER},
+      #{paymentAmount,jdbcType=INTEGER},
+      #{repaymentAmount,jdbcType=INTEGER}, #{term,jdbcType=INTEGER}, #{productName,jdbcType=VARCHAR},
+      #{productCategory,jdbcType=INTEGER}, #{userBankCardId,jdbcType=BIGINT}, #{bankName,jdbcType=VARCHAR}, 
+      #{bankCardNoLastFour,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+      #{terminal,jdbcType=VARCHAR}, NOW(), #{createdUser,jdbcType=VARCHAR},
+      NOW(), #{dataValid,jdbcType=BIT}, #{traceNo,jdbcType=VARCHAR},
+      #{serviceCompany,jdbcType=VARCHAR}, #{isReloan,jdbcType=INTEGER}, #{retryTimes,jdbcType=INTEGER},
+      #{nextRetryTime,jdbcType=TIMESTAMP},#{termUnit,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR},
+      #{userIdcardType,jdbcType=VARCHAR},#{userIdcardNo,jdbcType=VARCHAR})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.TrdPlatformLoanOrder">
+    update trd_platform_loan_order
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ukToken != null">
+        uk_token = #{ukToken,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null">
+        order_type = #{orderType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAmount != null">
+        order_amount = #{orderAmount,jdbcType=INTEGER},
+      </if>
+      <if test="loanTime != null">
+        loan_time = #{loanTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeAmount != null">
+        fee_amount = #{feeAmount,jdbcType=INTEGER},
+      </if>
+      <if test="interestAmount != null">
+        interest_amount = #{interestAmount,jdbcType=INTEGER},
+      </if>
+      <if test="paymentAmount != null">
+        payment_amount = #{paymentAmount,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null">
+        repayment_amount = #{repaymentAmount,jdbcType=INTEGER},
+      </if>
+      <if test="term != null">
+        term = #{term,jdbcType=INTEGER},
+      </if>
+      <if test="productName != null">
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="productCategory != null">
+        product_category = #{productCategory,jdbcType=INTEGER},
+      </if>
+      <if test="userBankCardId != null">
+        user_bank_card_id = #{userBankCardId,jdbcType=BIGINT},
+      </if>
+      <if test="bankName != null">
+        bank_name = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCardNoLastFour != null">
+        bank_card_no_last_four = #{bankCardNoLastFour,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="terminal != null">
+        terminal = #{terminal,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdUser != null">
+        created_user = #{createdUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataValid != null">
+        data_valid = #{dataValid,jdbcType=BIT},
+      </if>
+      <if test="traceNo != null">
+        trace_no = #{traceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceCompany != null">
+        service_company = #{serviceCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="isReloan != null">
+        is_reloan = #{isReloan,jdbcType=TINYINT},
+      </if>
+      <if test="retryTimes != null">
+        retry_times = #{retryTimes,jdbcType=INTEGER},
+      </if>
+      <if test="nextRetryTime != null">
+        next_retry_time=#{nextRetryTime,jdbcType=TIMESTAMP},
+       </if>
+      <if test="termUnit != null">
+        term_unit = #{termUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null">
+        product_code = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdcardType != null">
+        user_idcard_type = #{userIdcardType,jdbcType=VARCHAR},
+      </if>
+      <if test="userIdcardNo != null">
+        user_idcard_no = #{userIdcardNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getLoanOrderByCondition" parameterType="com.xianjinxia.trade.platform.request.BackOrderRequest" resultMap="BaseResultMap">
+      select order_no,order_amount,user_name,user_phone,service_company,created_time,product_name,status
+      from trd_platform_loan_order
+      <where>
+          <if test="orderNo != null">
+              order_no = #{orderNo,jdbcType=VARCHAR}
+          </if>
+          <if test="serviceCompany != null">
+              and service_company = #{serviceCompany,jdbcType=VARCHAR}
+          </if>
+          <if test="productCode != null">
+              and product_code = #{productCode,jdbcType=VARCHAR}
+          </if>
+
+          <if test="userPhone != null">
+              and user_phone = #{userPhone,jdbcType=VARCHAR}
+          </if>
+
+          <if test="userId != null">
+              and user_Id = #{userId,jdbcType=VARCHAR}
+          </if>
+
+          <if test="status != null">
+              and status = #{status,jdbcType=VARCHAR}
+          </if>
+
+          <if test="beginCreatedTime != null">
+              <![CDATA[
+              and created_time >= #{beginCreatedTime,jdbcType=TIMESTAMP}
+              ]]>
+          </if>
+
+          <if test="endCreatedTime != null">
+              <![CDATA[
+              and created_time <= #{endCreatedTime,jdbcType=TIMESTAMP}
+              ]]>
+          </if>
+      </where>
+      order by id desc
+  </select>
+
+
+    <select id="getLoanOrderByUserId" parameterType="com.xianjinxia.trade.platform.request.UserOrderRequest" resultMap="BaseResultMap">
+        select order_no,order_amount,created_time,service_company,
+        user_bank_card_id,product_code,term,term_unit,status
+        from trd_platform_loan_order
+        where user_id=#{userId,jdbcType=BIGINT}
+        order by id desc
+    </select>
+
+    <select id="getByStatusAndNextRetryTime"  resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from  trd_platform_loan_order
+        where status=#{status,jdbcType=VARCHAR}
+        and next_retry_time
+         <![CDATA[
+            <= #{nextRetryTime,jdbcType=TIMESTAMP}
+         ]]>
+    </select>
+
+    <update id="updateNextRetryTimeAndRetryTimesById">
+        update trd_platform_loan_order set
+        next_retry_time=#{nextRetryTime,jdbcType=TIMESTAMP},
+        retry_times=#{retryTimes,jdbcType=INTEGER}
+        where id=#{id,jdbcType=BIGINT}
+
+    </update>
+
+  <update id="updateLoanOrderStatus">
+    update trd_platform_loan_order set
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      status=#{targetStatus,jdbcType=VARCHAR},
+      updated_time=now()
+      <if test="partnerOperateTime != null">
+      ,partner_operate_time=#{partnerOperateTime,jdbcType=TIMESTAMP}
+      </if>
+    where
+      order_no =#{orderNo,jdbcType=VARCHAR}
+      and status=#{originStatus,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateLoanOrderRetryTimes">
+    update trd_platform_loan_order
+    set
+    retry_times = #{targetRetryTimes,jdbcType=INTEGER},
+    updated_time=now()
+    where
+    order_no =#{orderNo,jdbcType=VARCHAR}
+    and retry_times=#{originRetryTimes,jdbcType=INTEGER}
+  </update>
+
+
+  <update id="updateStatusAndNextRetryTimeAndRetryTimes">
+    update trd_platform_loan_order set
+    status=#{targetStatus,jdbcType=VARCHAR},
+    next_retry_time=#{nextRetryTime,jdbcType=TIMESTAMP},
+    retry_times=#{retryTimes,jdbcType=INTEGER},
+    updated_time=now()
+    where
+    order_no =#{orderNo,jdbcType=VARCHAR}
+    and status=#{originStatus,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from trd_platform_loan_order
+    where order_no =#{orderNo,jdbcType=VARCHAR}
+  </select>
+  <resultMap id="OrderAuditDtoResultMap" type="com.xianjinxia.trade.platform.dto.TrdPlatformOrderAuditDto">
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="trace_no" jdbcType="VARCHAR" property="traceNo" />
+    <result column="service_company" jdbcType="VARCHAR" property="serviceCompany" />
+  </resultMap>
+
+  <select id="selectStatusByOrderNo" parameterType="java.lang.String" resultMap="OrderAuditDtoResultMap">
+    select order_no,status,trace_no,service_company
+    from trd_platform_loan_order
+    where order_no = #{orderNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByStatusAndRetryTimes" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List" />
+    from trd_platform_loan_order
+    where retry_times &lt;= #{maxRetryTimes,jdbcType=INTEGER}
+    and status=#{status,jdbcType=VARCHAR}
+  </select>
+
+  <resultMap id="checkLoanResultMap" type="com.xianjinxia.trade.platform.dto.CheckLoanDto">
+      <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+      <result column="status" jdbcType="VARCHAR" property="status" />
+      <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+      <result column="user_bank_card_id" jdbcType="BIGINT" property="userBankCardId" />
+  </resultMap>
+
+  <select id="getOrderNoByUserIdAndServiceCompanyLast" resultMap="checkLoanResultMap">
+    select order_no,status,created_time,user_bank_card_id
+        from trd_platform_loan_order
+    where
+        user_id=#{userId,jdbcType=BIGINT}
+        and service_company=#{serviceCompany,jdbcType=VARCHAR}
+    order by id desc limit 0,1
+  </select>
+
+  <select id="selectOrderByUserIdOrderNo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from trd_platform_loan_order
+    where order_no =#{orderNo,jdbcType=VARCHAR} and  user_id=#{userId,jdbcType=BIGINT}
+  </select>
+	<select id="selectByUserId" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from trd_platform_loan_order
+      where user_id=#{userId,jdbcType=BIGINT}
+      and product_code=#{productCode,jdbcType=VARCHAR}
+    </select>
+</mapper>

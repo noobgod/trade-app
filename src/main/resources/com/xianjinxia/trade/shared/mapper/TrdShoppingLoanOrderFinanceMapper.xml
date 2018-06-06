@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingLoanOrderFinanceMapper">
+    <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shopping.dto.ShoppingProductOrderFinanceDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="specification_desc" property="productDesc" jdbcType="VARCHAR"/>
+        <result column="product_number" property="productNum" jdbcType="INTEGER"/>
+        <result column="status" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="created_at" property="orderTime" jdbcType="TIMESTAMP"/>
+        <result column="product_unit_price" property="productUnitPrice" jdbcType="INTEGER" />
+        <result column="send_time" property="sendTime" jdbcType="TIMESTAMP"/>
+        <result column="vender_name" property="venderName" jdbcType="VARCHAR"/>
+        <result column="product_price" property="productPrice" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="VirtualResultMap" type="com.xianjinxia.trade.shopping.dto.ShoppingVirtualProductOrderFinanceDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="product_id" property="productId" jdbcType="VARCHAR"/>
+        <result column="third_order_id" property="thirdOrderId" jdbcType="VARCHAR"/>
+        <result column="product_name" property="productName" jdbcType="VARCHAR"/>
+        <result column="specification_desc" property="productDesc" jdbcType="VARCHAR"/>
+        <result column="product_number" property="productNum" jdbcType="INTEGER"/>
+        <result column="product_unit_price" property="productUnitPrice" jdbcType="INTEGER" />
+        <result column="third_purchase_price" property="thirdUnitPrice" jdbcType="VARCHAR" />
+        <result column="product_price" property="productPrice" jdbcType="INTEGER" />
+        <result column="status" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="created_at" property="orderTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="BaseSummaryResult" type="com.xianjinxia.trade.shopping.dto.ShoppingProductOrderFinanceSummaryDto">
+        <result column="totalCount" property="totalCount" jdbcType="INTEGER"/>
+        <result column="totalAmount" property="totalAmount" jdbcType="INTEGER"/>
+        <result column="totalProducts" property="totalProducts" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="VirtualSummaryResultMap" type="com.xianjinxia.trade.shopping.dto.ShoppingVirtualProductOrderFinanceSummaryDto">
+        <result column="totalCount" property="totalCount" jdbcType="INTEGER"/>
+        <result column="totalAmount" property="totalAmount" jdbcType="INTEGER"/>
+        <result column="totalSaleAmount" property="totalSaleAmount" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <select id="selectSelective" resultMap="BaseResultMap" parameterType="com.xianjinxia.trade.shopping.request.bgd.FinanceShoppingOrderRequest">
+        SELECT slo.id, spo.product_id, slo.user_name, slo.user_phone, spo.product_name, slo.specification_desc, spo.product_number, slo.`status`,
+        slo.created_at,spo.product_unit_price,sloo.send_time,sloo.vender_name,spo.product_price
+        from trd_shopping_loan_order slo
+        INNER JOIN trd_shopping_product_order spo on spo.shopping_loan_order_id = slo.id
+        INNER JOIN trd_shopping_logistics_order sloo on sloo.shopping_loan_order_id = slo.id
+        <where>
+            slo.product_kind = 1 and slo.`status` IN (11,24,25,40,50)
+            <if test="null != userName and userName != ''">
+                AND slo.user_name = #{userName}
+            </if>
+            <if test="null != userPhone and userPhone != ''">
+                AND slo.user_phone = #{userPhone}
+            </if>
+            <if test="null != productName and productName != ''">
+                <bind name="productNameReq" value="'%' + productName + '%'" />
+                AND spo.product_name like #{productNameReq}
+            </if>
+            <if test="null != status and status != ''">
+                AND slo.`status` = #{status}
+            </if>
+            <if test="null != end and end != ''">
+                AND sloo.send_time  &lt;= #{end}
+            </if>
+            <if test="null != start and start != ''">
+                AND sloo.send_time &gt;= #{start}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectSummaryBySelective" resultMap="BaseSummaryResult" parameterType="com.xianjinxia.trade.shopping.request.bgd.FinanceShoppingOrderRequest">
+        SELECT  count(*) AS totalCount,
+        IFNULL(SUM(IFNULL(spo.product_number,0)),0) AS totalProducts,
+        TRUNCATE(IFNULL(SUM(IFNULL(slo.order_amount,0) +  IFNULL(sloo.logistics_price,0)) / 100,0) , 2) AS totalAmount
+        from trd_shopping_loan_order slo
+        INNER JOIN trd_shopping_product_order spo on spo.shopping_loan_order_id = slo.id
+        INNER JOIN trd_shopping_logistics_order sloo on sloo.shopping_loan_order_id = slo.id
+        <where>
+            slo.product_kind = 1 and slo.`status` IN (11,24,25,40,50)
+            <if test="null != userName and userName != ''">
+                AND slo.user_name = #{userName}
+            </if>
+            <if test="null != userPhone and userPhone != ''">
+                AND slo.user_phone = #{userPhone}
+            </if>
+            <if test="null != productName and productName != ''">
+                <bind name="productNameReq" value="'%' + productName + '%'" />
+                AND spo.product_name like #{productNameReq}
+            </if>
+            <if test="null != status and status != ''">
+                AND slo.`status` = #{status}
+            </if>
+            <if test="null != end and end != ''">
+                AND sloo.send_time  &lt;= #{end}
+            </if>
+            <if test="null != start and start != ''">
+                AND sloo.send_time &gt;= #{start}
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectVirtualOrderByParameter" resultMap="VirtualResultMap" parameterType="com.xianjinxia.trade.shopping.request.bgd.FinanceShoppingOrderRequest">
+        SELECT
+        slo.id, spo.product_id, slci.third_order_id, spo.product_name, slo.specification_desc, spo.product_number,
+        spo.product_unit_price, spo.third_purchase_price, spo.third_purchase_price*spo.product_number AS product_price, slo.`status`, slo.remark, slci.created_at
+        from (
+        SELECT slci.shopping_product_order_id, slci.third_order_id, slci.created_at
+        from trd_shoppping_loan_card_info slci
+        GROUP BY slci.shopping_product_order_id) slci
+        INNER JOIN trd_shopping_product_order spo on spo.id = slci.shopping_product_order_id
+        INNER JOIN trd_shopping_loan_order slo on slo.id = spo.shopping_loan_order_id
+        <where>
+            1=1
+            <if test="null != productName and productName != ''">
+                <bind name="productNameReq" value="'%' + productName + '%'" />
+                AND spo.product_name like #{productNameReq}
+            </if>
+            <if test="null != status and status != ''">
+                AND slo.`status` = #{status}
+            </if>
+            <if test="null != end and end != ''">
+                AND slci.created_at  &lt;= #{end}
+            </if>
+            <if test="null != start and start != ''">
+                AND slci.created_at &gt;= #{start}
+            </if>
+
+        </where>
+    </select>
+    <select id="selectVirtualOrderSummaryByParameter" resultMap="VirtualSummaryResultMap" parameterType="com.xianjinxia.trade.shopping.request.bgd.FinanceShoppingOrderRequest">
+        SELECT
+        count(*) AS totalCount,
+        TRUNCATE(IFNULL(SUM(IFNULL(spo.product_price,0)) / 100, 0) , 2) AS totalSaleAmount,
+        TRUNCATE(IFNULL(SUM(IFNULL(spo.third_purchase_price,0) * spo.product_number), 0) , 2) AS totalAmount
+        from (
+        SELECT slci.shopping_product_order_id, slci.third_order_id, slci.created_at
+        from trd_shoppping_loan_card_info slci
+        GROUP BY slci.shopping_product_order_id) slci
+        INNER JOIN trd_shopping_product_order spo on spo.id = slci.shopping_product_order_id
+        INNER JOIN trd_shopping_loan_order slo on slo.id = spo.shopping_loan_order_id
+        <where>
+            1=1
+            <if test="null != productName and productName != ''">
+                <bind name="productNameReq" value="'%' + productName + '%'" />
+                AND spo.product_name like #{productNameReq}
+            </if>
+            <if test="null != status and status != ''">
+                AND slo.`status` = #{status}
+            </if>
+            <if test="null != end and end != ''">
+                AND slci.created_at  &lt;= #{end}
+            </if>
+            <if test="null != start and start != ''">
+                AND slci.created_at &gt;= #{start}
+            </if>
+
+        </where>
+    </select>
+
+
+</mapper>

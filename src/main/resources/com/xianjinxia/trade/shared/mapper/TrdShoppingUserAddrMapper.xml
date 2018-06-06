@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingUserAddrMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdShoppingUserAddr">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="detail_addr" jdbcType="VARCHAR" property="detailAddr" />
+    <result column="post_no" jdbcType="VARCHAR" property="postNo" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="is_default" jdbcType="BIT" property="isDefault" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="data_valid" jdbcType="BIT" property="dataValid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, province, city, area, detail_addr, post_no, username, mobile, is_default, 
+    created_at, updated_at, remark, data_valid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_user_addr
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByUserId" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingUserAddr">
+    select
+    <include refid="Base_Column_List" />
+    from trd_shopping_user_addr
+    where user_id = #{userId,jdbcType=BIGINT} and data_valid = 1
+  </select>
+
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingUserAddr" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_shopping_user_addr (id, user_id, province, 
+      city, area, detail_addr, 
+      post_no, username, mobile, 
+      is_default, created_at, updated_at, 
+      remark, data_valid)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{detailAddr,jdbcType=VARCHAR}, 
+      #{postNo,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{isDefault,jdbcType=BIT}, now(), now(), 
+      #{remark,jdbcType=VARCHAR}, 1)
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingUserAddr">
+    update trd_shopping_user_addr
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="detailAddr != null">
+        detail_addr = #{detailAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="postNo != null">
+        post_no = #{postNo,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+        is_default = #{isDefault,jdbcType=BIT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="dataValid != null">
+        data_valid = #{dataValid,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

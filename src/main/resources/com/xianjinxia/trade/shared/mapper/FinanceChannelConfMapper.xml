@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.FinanceChannelConfMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.FinanceChannelConf">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="data_valid" jdbcType="BIT" property="dataValid" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
+    <result column="funds_rate" jdbcType="TINYINT" property="fundsRate" />
+    <result column="settlement_period" jdbcType="TINYINT" property="settlementPeriod" />
+    <result column="daily_limit" jdbcType="INTEGER" property="dailyLimit" />
+    <result column="collateral_compensation" jdbcType="INTEGER" property="collateralCompensation" />
+    <result column="loan_prescription" jdbcType="INTEGER" property="loanPrescription" />
+    <result column="bond_ratio" jdbcType="TINYINT" property="bondRatio" />
+    <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
+    <result column="channel_flag" jdbcType="VARCHAR" property="channelFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, created_time, data_valid, update_time, created_user, funds_rate, settlement_period, 
+    daily_limit, collateral_compensation, loan_prescription, bond_ratio, channel_name, 
+    channel_flag
+  </sql>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from finance_channel_conf
+  </select>
+</mapper>

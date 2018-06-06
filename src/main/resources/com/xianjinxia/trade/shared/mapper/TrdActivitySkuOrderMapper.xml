@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdActivitySkuOrderMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdActivitySkuOrder" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="biz_seq_no" property="bizSeqNo" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="product_name" property="productName" jdbcType="VARCHAR" />
+        <result column="product_specification" property="specification" jdbcType="VARCHAR" />
+        <result column="product_price" property="productPrice" jdbcType="INTEGER" />
+        <result column="receive_username" property="receiveUsername" jdbcType="VARCHAR" />
+        <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR" />
+        <result column="receive_city" property="receiveCity" jdbcType="VARCHAR" />
+        <result column="receive_address" property="receiveAddress" jdbcType="VARCHAR" />
+        <result column="logistics_company" property="logisticsCompany" jdbcType="VARCHAR" />
+        <result column="logistics_no" property="logisticsNo" jdbcType="VARCHAR" />
+        <result column="vender_name" property="venderName" jdbcType="VARCHAR" />
+        <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="data_valid" property="dataValid" jdbcType="BIT" />
+        <result column="create_time" property="createdAt" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="createdAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, biz_seq_no, user_id,
+        user_phone, user_name, product_id,
+        product_name, product_specification, product_price,
+        receive_username, receive_phone, receive_city, receive_address,logistics_company,
+        logistics_no,vender_name,send_time,status,data_valid,create_time,update_time
+
+    </sql>
+    <select id="getUserAddress" resultType="com.xianjinxia.trade.activity.dto.UserAddressDto">
+        SELECT
+           receive_username as receiveUsername, receive_phone as receivePhone,
+           receive_city as receiveCity, receive_address as receiveAddress
+        from trd_activity_sku_order
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="getSaleCount" resultType="com.xianjinxia.trade.activity.dto.ActivitySkuSaleCountDto">
+        SELECT product_id as productId, COUNT(id) as saleCount
+        from trd_activity_sku_order
+        where product_id in
+        <foreach item="pid" index="index" collection="productIds" open="(" separator="," close=")">
+            ${pid}
+        </foreach>
+        and `status` in (3,5)
+        GROUP BY product_id
+    </select>
+
+    <select id="getAllActivitySkuOrder" resultType="com.xianjinxia.trade.activity.dto.ActivitySkuOrderDto">
+        SELECT
+	        id, `status`,
+	        product_id as productId, product_name as productName, product_price as productPrice,
+	        receive_username as receiveUsername, receive_phone as receivePhone, receive_city as receiveCity, receive_address as receiveAddress,
+	        logistics_company as logisticsCompany, logistics_no as  logisticsNo
+        from trd_activity_sku_order
+        where user_id = #{userId,jdbcType=BIGINT}
+        ORDER BY update_time DESC
+    </select>
+    <select id="getOrderByUserIdAndStatus" resultType="com.xianjinxia.trade.activity.dto.ActivitySkuOrderDto">
+        SELECT
+	        id, `status`,
+	        product_id as productId, product_name as productName, product_price as productPrice,
+	        receive_username as receiveUsername, receive_phone as receivePhone, receive_city as receiveCity, receive_address as receiveAddress,
+	        logistics_company as logisticsCompany, logistics_no as  logisticsNo
+        from trd_activity_sku_order
+        where user_id = #{userId,jdbcType=BIGINT}
+        AND product_id = #{productId,jdbcType=BIGINT}
+        AND `status` in
+        <foreach item="item" index="index" collection="statusArray" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdActivitySkuOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into trd_activity_sku_order (id, biz_seq_no, user_id,
+        user_phone, user_name, product_id,
+        product_name, product_specification, product_price,
+        receive_username, receive_phone, receive_city, receive_address,status
+        )
+        values (#{id,jdbcType=BIGINT}, #{bizSeqNo,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+        #{userPhone,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{productId,jdbcType=INTEGER},
+        #{productName,jdbcType=VARCHAR}, #{specification,jdbcType=VARCHAR}, #{productPrice,jdbcType=INTEGER},
+        #{receiveUsername,jdbcType=VARCHAR}, #{receivePhone,jdbcType=VARCHAR}, #{receiveCity,jdbcType=VARCHAR}, #{receiveAddress,jdbcType=VARCHAR},#{status,jdbcType=INTEGER}
+        )
+    </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from trd_activity_sku_order
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <update id="updateOrderStatus">
+        update trd_activity_sku_order
+        set
+        status = #{newStatus},
+        update_time = now()
+        where
+        id = #{id,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+    </update>
+
+</mapper>

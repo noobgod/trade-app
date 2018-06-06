@@ -1,0 +1,9 @@
+[DB1]
+    /db/20171221/db1.sql
+[DB2]
+    /db/20171221/db2.sql
+[CONTENT]
+    大額分期放款功能
+
+[DEVELOPER]
+

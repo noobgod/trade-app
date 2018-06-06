@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingProductOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdShoppingProductOrder" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="shopping_loan_order_id" property="shoppingLoanOrderId" jdbcType="BIGINT" />
+    <result column="product_id" property="productId" jdbcType="VARCHAR" />
+    <result column="product_price" property="productPrice" jdbcType="INTEGER" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="product_category" property="productCategory" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="created_user" property="createdUser" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="VARCHAR" />
+    <result column="data_valid" property="dataValid" jdbcType="BIT" />
+    <result column="product_unit_price" property="productUnitPrice" jdbcType="INTEGER" />
+    <result column="product_number" property="productNumber" jdbcType="INTEGER" />
+    <result column="third_product_id" property="thirdProductId" jdbcType="VARCHAR" />
+    <result column="third_purchase_price" property="thirdPurchasePrice" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, shopping_loan_order_id, product_id, product_price, product_name, product_category, 
+    status, created_at, created_user, updated_at, updated_user, data_valid,product_unit_price,product_number,third_product_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_product_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getByShoppingLoanOrderId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_product_order
+    where shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT} limit 0,1
+  </select>
+  
+	<select id="selectPage" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingProductOrder" parameterType="com.xianjinxia.trade.shopping.response.bgd.ShoppingProductOrderDto">
+      select
+      <include refid="Base_Column_List" />
+      from trd_shopping_product_order
+      <where>
+        <if test="status != null and status != ''">
+          and status = #{status}
+        </if>
+      </where>
+      order by created_at desc
+    </select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trd_shopping_product_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingProductOrder" >
+    insert into trd_shopping_product_order (id, shopping_loan_order_id, product_id, 
+      product_price, product_name, product_category, 
+      status, created_at, created_user, 
+      updated_at, updated_user, data_valid,
+      product_number, third_product_id,product_unit_price
+      )
+    values (#{id,jdbcType=BIGINT}, #{shoppingLoanOrderId,jdbcType=BIGINT}, #{productId,jdbcType=VARCHAR},
+      #{productPrice,jdbcType=INTEGER}, #{productName,jdbcType=VARCHAR}, #{productCategory,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, now(), #{createdUser,jdbcType=VARCHAR}, 
+      now(), #{updatedUser,jdbcType=VARCHAR}, 1, #{productNumber,jdbcType=INTEGER}, #{thirdProductId,jdbcType=VARCHAR}, #{productUnitPrice,jdbcType=INTEGER}
+      )
+  </insert>
+  
+   <update id="updateProductOrderStatus">
+      update trd_shopping_product_order
+      set
+        status = #{newStatus},
+        updated_at = now()
+      where
+        shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+  <update id="updateProductStatusAndPurchasePrice">
+      update trd_shopping_product_order
+      set
+        status = #{newStatus},
+        third_purchase_price = #{purchasePrice},
+        updated_at = now()
+      where
+        shopping_loan_order_id = #{shoppingLoanOrderId,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+
+  <select id="selectByParams" resultType="com.xianjinxia.trade.shopping.response.bgd.ShoppingProductOrderDto" parameterType="com.xianjinxia.trade.shopping.response.bgd.ShoppingProductOrderDto">
+    select
+      a.id as id, a.shopping_loan_order_id as shoppingLoanOrderId, a.product_id as productId, a.product_price as productPrice, a.product_number as productCount,
+      a.product_name as productName, a.product_category as productCategory, a.product_price as productPic, a.`status` as status, a.created_at as createdAt,
+      a.updated_at as updatedAt, b.specification_json as specificationJson, b.specification_desc as specificationDesc, b.user_name as userName,
+      b.user_phone as userPhone, c.receive_username as receiveUsername, c.receive_addr as receiveAddr, c.receive_mobile as receiveMobile, b.product_kind as kindId
+    from trd_shopping_product_order a
+    inner join trd_shopping_loan_order b on a.shopping_loan_order_id = b.id
+    inner join trd_shopping_logistics_order c on a.shopping_loan_order_id = c.shopping_loan_order_id
+    <where>
+      <if test="status != null and status != ''">
+        and a.`status` = #{status}
+      </if>
+      <if test="receiveUsername != null and receiveUsername != ''">
+        and c.receive_username like '%${receiveUsername}%'
+      </if>
+      <if test="receiveMobile != null and receiveMobile != ''">
+        and c.receive_mobile like '%${receiveMobile}%'
+      </if>
+    </where>
+    order by a.created_at desc
+  </select>
+</mapper>

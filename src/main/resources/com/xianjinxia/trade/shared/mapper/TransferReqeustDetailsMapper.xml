@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TransferReqeustDetailsMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TransferReqeustDetails">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="transfer_request_id" jdbcType="BIGINT" property="transferRequestId" />
+    <result column="from_user_id" jdbcType="BIGINT" property="fromUserId" />
+    <result column="coin_num" jdbcType="DECIMAL" property="coinNum" />
+    <result column="medium_id" jdbcType="BIGINT" property="mediumId" />
+    <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
+    <result column="transaction_type" jdbcType="VARCHAR" property="transactionType" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, transfer_request_id, from_user_id, coin_num, medium_id, to_user_id, transaction_type,
+    status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from transfer_reqeust_details
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from transfer_reqeust_details
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TransferReqeustDetails">
+    insert into transfer_reqeust_details (id, transfer_request_id, from_user_id, 
+      coin_num, medium_id, to_user_id,
+      transaction_type, status)
+    values (#{id,jdbcType=BIGINT}, #{transferRequestId,jdbcType=BIGINT}, #{fromUserId,jdbcType=BIGINT}, 
+      #{coinNum,jdbcType=DECIMAL}, #{mediumId,jdbcType=BIGINT}, #{toUserId,jdbcType=BIGINT},
+      #{transactionType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xianjinxia.trade.shared.domain.TransferReqeustDetails">
+    insert into transfer_reqeust_details
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="transferRequestId != null">
+        transfer_request_id,
+      </if>
+      <if test="fromUserId != null">
+        from_user_id,
+      </if>
+      <if test="coinNum != null">
+        coin_num,
+      </if>
+      <if test="mediumId != null">
+        medium_id,
+      </if>
+      <if test="toUserId != null">
+        to_user_id,
+      </if>
+      <if test="transactionType != null">
+        transaction_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="transferRequestId != null">
+        #{transferRequestId,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserId != null">
+        #{fromUserId,jdbcType=BIGINT},
+      </if>
+      <if test="coinNum != null">
+        #{coinNum,jdbcType=DECIMAL},
+      </if>
+      <if test="mediumId != null">
+        #{mediumId,jdbcType=BIGINT},
+      </if>
+      <if test="toUserId != null">
+        #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="transactionType != null">
+        #{transactionType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByReqIdStatus">
+    update transfer_reqeust_details
+    <set>
+      status = #{curStatus,jdbcType=VARCHAR}
+    </set>
+    where transfer_request_id = #{reqId,jdbcType=BIGINT}
+    and status = #{preStatus,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.TransferReqeustDetails">
+    update transfer_reqeust_details
+    <set>
+      <if test="transferRequestId != null">
+        transfer_request_id = #{transferRequestId,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserId != null">
+        from_user_id = #{fromUserId,jdbcType=BIGINT},
+      </if>
+      <if test="coinNum != null">
+        coin_num = #{coinNum,jdbcType=DECIMAL},
+      </if>
+      <if test="mediumId != null">
+        medium_id = #{mediumId,jdbcType=BIGINT},
+      </if>
+      <if test="toUserId != null">
+        to_user_id = #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="transactionType != null">
+        transaction_type = #{transactionType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xianjinxia.trade.shared.domain.TransferReqeustDetails">
+    update transfer_reqeust_details
+    set transfer_request_id = #{transferRequestId,jdbcType=BIGINT},
+      from_user_id = #{fromUserId,jdbcType=BIGINT},
+      coin_num = #{coinNum,jdbcType=DECIMAL},
+      medium_id = #{mediumId,jdbcType=BIGINT},
+      to_user_id = #{toUserId,jdbcType=BIGINT},
+      transaction_type = #{transactionType,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

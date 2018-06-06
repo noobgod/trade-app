@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.EventIdempotentMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.EventIdempotent">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="updated_user" jdbcType="VARCHAR" property="updatedUser" />
+    <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
+    <result column="source_type" jdbcType="VARCHAR" property="sourceType" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="uk_token" jdbcType="VARCHAR" property="ukToken" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, created_time, created_user, updated_time, updated_user, source_id, source_type, 
+    status, uk_token, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_event_idempotent
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trd_event_idempotent
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.EventIdempotent">
+    insert into trd_event_idempotent (id, created_time, created_user, 
+      updated_time, updated_user, source_id, 
+      source_type, status, uk_token, 
+      remark)
+    values (#{id,jdbcType=BIGINT}, #{createdTime,jdbcType=TIMESTAMP}, #{createdUser,jdbcType=VARCHAR}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{updatedUser,jdbcType=VARCHAR}, #{sourceId,jdbcType=VARCHAR}, 
+      #{sourceType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{ukToken,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xianjinxia.trade.shared.domain.EventIdempotent">
+    insert into trd_event_idempotent
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="createdUser != null">
+        created_user,
+      </if>
+      <if test="updatedTime != null">
+        updated_time,
+      </if>
+      <if test="updatedUser != null">
+        updated_user,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="sourceType != null">
+        source_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="ukToken != null">
+        uk_token,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdUser != null">
+        #{createdUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null">
+        #{updatedUser,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="ukToken != null">
+        #{ukToken,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.EventIdempotent">
+    update trd_event_idempotent
+    <set>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdUser != null">
+        created_user = #{createdUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedTime != null">
+        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedUser != null">
+        updated_user = #{updatedUser,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        source_type = #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="ukToken != null">
+        uk_token = #{ukToken,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xianjinxia.trade.shared.domain.EventIdempotent">
+    update trd_event_idempotent
+    set created_time = #{createdTime,jdbcType=TIMESTAMP},
+      created_user = #{createdUser,jdbcType=VARCHAR},
+      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+      updated_user = #{updatedUser,jdbcType=VARCHAR},
+      source_id = #{sourceId,jdbcType=VARCHAR},
+      source_type = #{sourceType,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      uk_token = #{ukToken,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="saveEventIdempotent" parameterType="com.xianjinxia.trade.shared.domain.EventIdempotent" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_event_idempotent(
+    source_id,
+    source_type,
+    remark ,
+    created_time ,
+    created_user ,
+    updated_time ,
+    uk_token
+    )
+    values(
+    #{sourceId},
+    #{sourceType},
+    #{remark},
+    now(),
+    'SYS',
+    now(),
+    '0'
+    )
+  </insert>
+</mapper>

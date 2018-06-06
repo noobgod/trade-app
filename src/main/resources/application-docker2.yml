@@ -1,0 +1,41 @@
+spring:
+    datasource:
+        druid:
+            url: jdbc:mysql://rm-bp1rc23s40ss8j9lw.mysql.rds.aliyuncs.com:3306/dkcs_trade?useUnicode=true&characterEncoding=UTF-8
+            username: user_dkcs
+            password: 3pILfWsofG0e2ebP
+            type: com.alibaba.druid.pool.DruidDataSource
+            driver-class-name: com.mysql.jdbc.Driver
+            initial-size: 200
+            max-active: 1000
+            min-idle: 5
+            max-wait: 60000
+            validation-query: SELECT 1
+            test-on-borrow: false
+            test-on-return: false
+            test-while-idle: true
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 25200000
+            remove-abandoned: true
+            remove-abandoned-timeout: 1800
+            logAbandoned: true
+            filters: stat
+            pool-prepared-statement: true
+            max-open-prepared-statements: 100
+
+server:
+    port: 8080
+
+ext:
+    swagger:
+      enabled: false
+    activeMqConfiguration:
+      brokerUrl: failover:(tcp://172.17.0.1:61616?wireFormat.maxInactivityDuration=0)
+      queueTableName: trd_mq_message
+      queueName: trd_queue
+      queueMaxCount: 50000
+      isCreateTable: 1
+    oldCashmanServerAddressConfig:
+      serverAddress: 121.43.172.116:2000
+    smsConfig:
+      url: 121.40.90.49:8080/uninoty/api/message/send-by-type

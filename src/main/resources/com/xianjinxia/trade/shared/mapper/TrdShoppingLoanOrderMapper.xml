@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdShoppingLoanOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="product_freeze_no" property="productFreezeNo" jdbcType="VARCHAR" />
+    <result column="order_amount" property="orderAmount" jdbcType="INTEGER" />
+    <result column="fee_amount" property="feeAmount" jdbcType="INTEGER" />
+    <result column="interest_amount" property="interestAmount" jdbcType="INTEGER" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="INTEGER" />
+    <result column="repayment_amount" property="repaymentAmount" jdbcType="INTEGER" />
+    <result column="term" property="term" jdbcType="INTEGER" />
+    <result column="term_unit" property="termUnit" jdbcType="VARCHAR" />
+    <result column="term_rate" property="termRate" jdbcType="DECIMAL" />
+    <result column="product_id" property="productId" jdbcType="BIGINT" />
+    <result column="product_category" property="productCategory" jdbcType="INTEGER" />
+    <result column="is_depository" property="isDepository" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="BIT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="trace_no" property="traceNo" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_idcard_type" property="userIdcardType" jdbcType="VARCHAR" />
+    <result column="user_idcard_no" property="userIdcardNo" jdbcType="VARCHAR" />
+    <result column="user_bank_card_id" property="userBankCardId" jdbcType="BIGINT" />
+    <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+    <result column="bank_card_no_last_four" property="bankCardNoLastFour" jdbcType="VARCHAR" />
+    <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="terminal" property="terminal" jdbcType="VARCHAR" />
+    <result column="uk_token" property="ukToken" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="created_user" property="createdUser" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="VARCHAR" />
+    <result column="specification_json" property="specificationJson" jdbcType="VARCHAR" />
+    <result column="specification_desc" property="specificationDesc" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="data_valid" property="dataValid" jdbcType="BIT" />
+    <result column="third_order_time" property="thirdOrderTime" jdbcType="TIMESTAMP" />
+    <result column="product_kind" property="productKind" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_freeze_no, order_amount, fee_amount, interest_amount, payment_amount, 
+    repayment_amount, term, term_unit, term_rate, product_id, product_category, is_depository, 
+    user_type, status, trace_no, user_id, user_idcard_type, user_idcard_no, user_bank_card_id, 
+    bank_name, bank_card_no_last_four, user_phone, user_name, source, terminal, uk_token, 
+    created_at, created_user, updated_at, updated_user,specification_json,specification_desc, remark, data_valid,third_order_time,product_kind
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from trd_shopping_loan_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from trd_shopping_loan_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into trd_shopping_loan_order (id, product_freeze_no, order_amount, 
+      fee_amount, interest_amount, payment_amount, 
+      repayment_amount, term, term_unit, 
+      term_rate, product_id, product_category, product_kind,
+      is_depository, user_type, status, 
+      trace_no, user_id, user_idcard_type, 
+      user_idcard_no, user_bank_card_id, bank_name, 
+      bank_card_no_last_four, user_phone, user_name, 
+      source, terminal, uk_token, 
+      created_at, created_user, updated_at,
+      updated_user,specification_json,specification_desc, remark, data_valid
+      )
+    values (#{id,jdbcType=BIGINT}, #{productFreezeNo,jdbcType=VARCHAR}, #{orderAmount,jdbcType=INTEGER}, 
+      #{feeAmount,jdbcType=INTEGER}, #{interestAmount,jdbcType=INTEGER}, #{paymentAmount,jdbcType=INTEGER}, 
+      #{repaymentAmount,jdbcType=INTEGER}, #{term,jdbcType=INTEGER}, #{termUnit,jdbcType=VARCHAR}, 
+      #{termRate,jdbcType=DECIMAL}, #{productId,jdbcType=BIGINT}, #{productCategory,jdbcType=INTEGER}, #{productKind,jdbcType=INTEGER},
+      #{isDepository,jdbcType=VARCHAR}, #{userType,jdbcType=BIT}, #{status,jdbcType=VARCHAR}, 
+      #{traceNo,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{userIdcardType,jdbcType=VARCHAR}, 
+      #{userIdcardNo,jdbcType=VARCHAR}, #{userBankCardId,jdbcType=BIGINT}, #{bankName,jdbcType=VARCHAR}, 
+      #{bankCardNoLastFour,jdbcType=VARCHAR}, #{userPhone,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{source,jdbcType=VARCHAR}, #{terminal,jdbcType=VARCHAR}, #{ukToken,jdbcType=VARCHAR}, 
+      now(),#{createdUser,jdbcType=VARCHAR}, now(), #{updatedUser,jdbcType=VARCHAR},
+      #{specificationJson,jdbcType=VARCHAR},#{specificationDesc,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, 1
+      )
+  </insert>
+  
+  <update id="updateLoanOrderStatusToPending">
+      update trd_shopping_loan_order
+      set
+        status = #{newStatus},
+        updated_at = now()
+      where
+        id = #{id,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+  
+  <update id="updateLoanOrderStatus">
+      update trd_shopping_loan_order
+      set
+        status = #{newStatus},
+        updated_at = now()
+      where
+        id = #{id,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+  <update id="updateByUserIdAndStatus">
+     update trd_shopping_loan_order
+      set
+        status = #{newStatus},
+        updated_at = now()
+      where
+        user_id = #{userId,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+
+  </update>
+
+  <select id="countByUserIdAndStatus" resultType="java.lang.Integer">
+	select count(1)
+	from trd_shopping_loan_order 
+	where
+      data_valid = 1
+	  and user_id = #{userId,jdbcType=BIGINT}
+      and status in
+      <foreach item="item" index="index" collection="statusArray" open="(" separator="," close=")">
+        ${item}
+     </foreach>
+  </select>
+
+  <select id="countByTraceNo" resultType="java.lang.Integer">
+    select count(1)
+    from trd_shopping_loan_order
+    where
+      data_valid = 1
+      and trace_no = #{traceNo,jdbcType=VARCHAR}
+  </select>
+	<select id="selectPage" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder" parameterType="com.xianjinxia.trade.shopping.response.bgd.ShoppingLoanOrderDto">
+      select
+      <include refid="Base_Column_List" />
+      from trd_shopping_loan_order
+      <where>
+        <if test="userName != null and userName != ''">
+          and user_name like '%${userName}%'
+        </if>
+        <if test="userPhone != null and userPhone != ''">
+          and user_phone like '%${userPhone}%'
+        </if>
+      </where>
+      order by created_at desc
+    </select>
+
+	<select id="selectSelective" resultType="com.xianjinxia.trade.app.dto.LoanOrderDto">
+      select
+        id,
+        user_id userId,
+        order_amount orderAmount,
+        interest_amount interestAmount,
+        #{productCategory} orderType,
+        created_at createdTime,
+        product_kind kindId,
+        if (`status` in(-11), 1, 0) isOverdue,
+        status,
+        case
+        when `status` = 0  then
+        '审核中'
+        when `status` = -3 then
+        '审核失败'
+         when `status` = 30 then
+        '人工审核中'
+         when `status` = -30 then
+        '人工审核失败'
+        when `status` = 31 then
+        '人工审核通过'
+        when `status` = 24 then
+        '配送中'
+        when `status` = -10 then
+        '发货失败'
+        when `status` = 21 then
+        '待还款'
+        when `status` = 11 then
+        '已还清'
+        when `status` = -11 then
+        '已逾期'
+        else
+        ''
+        end statusText
+        from
+        trd_shopping_loan_order
+        where user_id=#{userId}
+        and status != 9
+        and data_valid =1
+        and product_category=#{productCategory}
+        order by created_at desc
+    </select>
+  <select id="selectByUserIdAndStatus" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder">
+    select
+    <include refid="Base_Column_List" />
+    from trd_shopping_loan_order
+    where
+    data_valid = 1
+    and user_id = #{userId,jdbcType=BIGINT}
+    and status in
+    <foreach item="item" index="index" collection="statusArray" open="(" separator="," close=")">
+      ${item}
+    </foreach>
+    and data_valid = 1
+  </select>
+	<select id="selectByUserIdAndStatusLimit" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder">
+      select
+        <include refid="Base_Column_List"/>
+      from trd_shopping_loan_order
+      where
+        user_id = #{userId,jdbcType=BIGINT}
+        and status in
+      <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+        ${item}
+      </foreach> order by id desc limit 0,1
+    </select>
+	<select id="getLastLoanOrderByUserIdAndProductCategory" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder">
+        select <include refid="Base_Column_List"/> from trd_shopping_loan_order
+        where user_id=#{userId,jdbcType=BIGINT}
+        order by id desc limit 0,1
+    </select>
+
+    <select id="selectListByStatusAndKind" resultType="com.xianjinxia.trade.shared.domain.TrdShoppingLoanOrder">
+        select
+        <include refid="Base_Column_List"/>
+        from trd_shopping_loan_order
+        where status=#{status}
+        and product_kind=#{productKind}
+    </select>
+
+  <update id="updateVirtualLoanOrderStatus">
+      update trd_shopping_loan_order
+      set
+        status = #{newStatus},
+        updated_at = now(),
+        third_order_time = #{thirdOrderTime}
+      where
+        id = #{id,jdbcType=BIGINT}
+        and status = #{preStatus}
+        and data_valid = 1
+  </update>
+
+  <select id="selectByIdOrUserNamePhone" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from trd_shopping_loan_order
+    <where>
+      id = #{id,jdbcType=BIGINT}
+      <if test="userName != null and userName != ''">
+        and user_name like '%${userName}%'
+      </if>
+      <if test="userPhone != null and userPhone != ''">
+        and user_phone like '%${userPhone}%'
+      </if>
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdSettleRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdSettleRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="source_id" jdbcType="VARCHAR" property="sourceId" />
+    <result column="source_type" jdbcType="VARCHAR" property="sourceType" />
+    <result column="settle_no" jdbcType="VARCHAR" property="settleNo" />
+    <result column="settle_oder_type" jdbcType="VARCHAR" property="settleOderType" />
+    <result column="from_user_id" jdbcType="BIGINT" property="fromUserId" />
+    <result column="from_user_name" jdbcType="VARCHAR" property="fromUserName" />
+    <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
+    <result column="to_user_name" jdbcType="VARCHAR" property="toUserName" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="expecte_service_charge" jdbcType="DECIMAL" property="expecteServiceCharge" />
+    <result column="actual_service_charge" jdbcType="DECIMAL" property="actualServiceCharge" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="pet_id" jdbcType="BIGINT" property="petId" />
+    <result column="pet_code" jdbcType="VARCHAR" property="petCode" />
+    <result column="pet_name" jdbcType="VARCHAR" property="petName" />
+    <result column="pet_img" jdbcType="VARCHAR" property="petImg" />
+    <result column="pet_generate_level" jdbcType="VARCHAR" property="petGenerateLevel" />
+    <result column="pet_property_detail" jdbcType="VARCHAR" property="petPropertyDetail" />
+    <result column="pet_varity" jdbcType="VARCHAR" property="petVarity" />
+    <result column="from_frozen_no" jdbcType="VARCHAR" property="fromFrozenNo" />
+    <result column="to_frozen_no" jdbcType="VARCHAR" property="toFrozenNo" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, source_id, source_type, settle_no, settle_oder_type, from_user_id, from_user_name, 
+    to_user_id, to_user_name, price, expecte_service_charge, actual_service_charge, payment_time, 
+    status, pet_id, pet_code, pet_name, pet_img, pet_generate_level, pet_property_detail, pet_varity,
+    from_frozen_no, to_frozen_no, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_settle_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectOrdersByUserId" resultMap="BaseResultMap">
+   SELECT a.settle_no, pet_code,
+   CASE #{userId,jdbcType=BIGINT} WHEN a.from_user_id THEN a.price WHEN a.to_user_id THEN -1 * (a.price+IFNULL(a.actual_service_charge, 0)) END price,
+     a.expecte_service_charge,
+      a.actual_service_charge,
+      a.payment_time, a.status, a.pet_id, a.pet_name, a.pet_img, a.pet_generate_level, a.pet_varity, a.remark
+    FROM trd_settle_record a
+    where (a.from_user_id = #{userId,jdbcType=BIGINT}
+      or a.to_user_id = #{userId,jdbcType=BIGINT}
+     )
+     and a.status != #{status,jdbcType=VARCHAR}
+     order by a.payment_time
+  </select>
+  <select id="selectOrdersByStatus" resultMap="BaseResultMap">
+    SELECT
+      <include refid="Base_Column_List" />
+    FROM trd_settle_record
+    where status = #{status,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectOrdersBySettleNo" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM trd_settle_record
+    where settle_no = #{settleNo,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trd_settle_record
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdSettleRecord">
+    insert into trd_settle_record (id, source_id, source_type, 
+      settle_no, settle_oder_type, from_user_id, 
+      from_user_name, to_user_id, to_user_name, 
+      price, expecte_service_charge, actual_service_charge, 
+      payment_time, status, pet_id, pet_code,
+      pet_name, pet_img, pet_generate_level, 
+      pet_property_detail, pet_varity, from_frozen_no, 
+      to_frozen_no, remark)
+    values (#{id,jdbcType=BIGINT}, #{sourceId,jdbcType=VARCHAR}, #{sourceType,jdbcType=VARCHAR}, 
+      #{settleNo,jdbcType=VARCHAR}, #{settleOderType,jdbcType=VARCHAR}, #{fromUserId,jdbcType=BIGINT}, 
+      #{fromUserName,jdbcType=VARCHAR}, #{toUserId,jdbcType=BIGINT}, #{toUserName,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{expecteServiceCharge,jdbcType=DECIMAL}, #{actualServiceCharge,jdbcType=DECIMAL}, 
+      #{paymentTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{petId,jdbcType=VARCHAR}, #{petCode,jdbcType=VARCHAR},
+      #{petName,jdbcType=VARCHAR}, #{petImg,jdbcType=VARCHAR}, #{petGenerateLevel,jdbcType=VARCHAR}, 
+      #{petPropertyDetail,jdbcType=VARCHAR}, #{petVarity,jdbcType=VARCHAR}, #{fromFrozenNo,jdbcType=VARCHAR}, 
+      #{toFrozenNo,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xianjinxia.trade.shared.domain.TrdSettleRecord">
+    insert into trd_settle_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="sourceType != null">
+        source_type,
+      </if>
+      <if test="settleNo != null">
+        settle_no,
+      </if>
+      <if test="settleOderType != null">
+        settle_oder_type,
+      </if>
+      <if test="fromUserId != null">
+        from_user_id,
+      </if>
+      <if test="fromUserName != null">
+        from_user_name,
+      </if>
+      <if test="toUserId != null">
+        to_user_id,
+      </if>
+      <if test="toUserName != null">
+        to_user_name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="expecteServiceCharge != null">
+        expecte_service_charge,
+      </if>
+      <if test="actualServiceCharge != null">
+        actual_service_charge,
+      </if>
+      <if test="paymentTime != null">
+        payment_time,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="petId != null">
+        pet_id,
+      </if>
+      <if test="petCode != null">
+        pet_code,
+      </if>
+      <if test="petName != null">
+        pet_name,
+      </if>
+      <if test="petImg != null">
+        pet_img,
+      </if>
+      <if test="petGenerateLevel != null">
+        pet_generate_level,
+      </if>
+      <if test="petPropertyDetail != null">
+        pet_property_detail,
+      </if>
+      <if test="petVarity != null">
+        pet_varity,
+      </if>
+      <if test="fromFrozenNo != null">
+        from_frozen_no,
+      </if>
+      <if test="toFrozenNo != null">
+        to_frozen_no,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="settleNo != null">
+        #{settleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="settleOderType != null">
+        #{settleOderType,jdbcType=VARCHAR},
+      </if>
+      <if test="fromUserId != null">
+        #{fromUserId,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserName != null">
+        #{fromUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserId != null">
+        #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="toUserName != null">
+        #{toUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="expecteServiceCharge != null">
+        #{expecteServiceCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="actualServiceCharge != null">
+        #{actualServiceCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentTime != null">
+        #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="petId != null">
+        #{petId,jdbcType=BIGINT},
+      </if>
+      <if test="petCode != null">
+        #{petCode,jdbcType=VARCHAR},
+      </if>
+      <if test="petName != null">
+        #{petName,jdbcType=VARCHAR},
+      </if>
+      <if test="petImg != null">
+        #{petImg,jdbcType=VARCHAR},
+      </if>
+      <if test="petGenerateLevel != null">
+        #{petGenerateLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="petPropertyDetail != null">
+        #{petPropertyDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="petVarity != null">
+        #{petVarity,jdbcType=VARCHAR},
+      </if>
+      <if test="fromFrozenNo != null">
+        #{fromFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="toFrozenNo != null">
+        #{toFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.TrdSettleRecord">
+    update trd_settle_record
+    <set>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        source_type = #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="settleNo != null">
+        settle_no = #{settleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="settleOderType != null">
+        settle_oder_type = #{settleOderType,jdbcType=VARCHAR},
+      </if>
+      <if test="fromUserId != null">
+        from_user_id = #{fromUserId,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserName != null">
+        from_user_name = #{fromUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserId != null">
+        to_user_id = #{toUserId,jdbcType=BIGINT},
+      </if>
+      <if test="toUserName != null">
+        to_user_name = #{toUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="expecteServiceCharge != null">
+        expecte_service_charge = #{expecteServiceCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="actualServiceCharge != null">
+        actual_service_charge = #{actualServiceCharge,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentTime != null">
+        payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="petId != null">
+        pet_id = #{petId,jdbcType=BIGINT},
+      </if>
+      <if test="petCode != null">
+        pet_code = #{petCode,jdbcType=VARCHAR},
+      </if>
+      <if test="petName != null">
+        pet_name = #{petName,jdbcType=VARCHAR},
+      </if>
+      <if test="petImg != null">
+        pet_img = #{petImg,jdbcType=VARCHAR},
+      </if>
+      <if test="petGenerateLevel != null">
+        pet_generate_level = #{petGenerateLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="petPropertyDetail != null">
+        pet_property_detail = #{petPropertyDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="petVarity != null">
+        pet_varity = #{petVarity,jdbcType=VARCHAR},
+      </if>
+      <if test="fromFrozenNo != null">
+        from_frozen_no = #{fromFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="toFrozenNo != null">
+        to_frozen_no = #{toFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateStatusByIdPreStatus">
+    update trd_settle_record
+    <set>
+      <if test="actualServiceCharge != null">
+        actual_service_charge = #{actualServiceCharge,jdbcType=DECIMAL},
+      </if>
+        payment_time = now(),
+        status = #{curStatus,jdbcType=VARCHAR}
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+    and status = #{preStatus,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateStatusByNoPreStatus">
+    update trd_settle_record
+    <set>
+      <if test="actualServiceCharge != null">
+        actual_service_charge = #{actualServiceCharge,jdbcType=DECIMAL},
+      </if>
+      payment_time = now(),
+      status = #{curStatus,jdbcType=VARCHAR}
+    </set>
+    where settle_no = #{settleNo,jdbcType=VARCHAR}
+    and status = #{preStatus,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xianjinxia.trade.shared.domain.TrdSettleRecord">
+    update trd_settle_record
+    set source_id = #{sourceId,jdbcType=VARCHAR},
+      source_type = #{sourceType,jdbcType=VARCHAR},
+      settle_no = #{settleNo,jdbcType=VARCHAR},
+      settle_oder_type = #{settleOderType,jdbcType=VARCHAR},
+      from_user_id = #{fromUserId,jdbcType=BIGINT},
+      from_user_name = #{fromUserName,jdbcType=VARCHAR},
+      to_user_id = #{toUserId,jdbcType=BIGINT},
+      to_user_name = #{toUserName,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      expecte_service_charge = #{expecteServiceCharge,jdbcType=DECIMAL},
+      actual_service_charge = #{actualServiceCharge,jdbcType=DECIMAL},
+      payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      pet_id = #{petId,jdbcType=BIGINT},
+      pet_code = #{petCode,jdbcType=VARCHAR},
+      pet_name = #{petName,jdbcType=VARCHAR},
+      pet_img = #{petImg,jdbcType=VARCHAR},
+      pet_generate_level = #{petGenerateLevel,jdbcType=VARCHAR},
+      pet_property_detail = #{petPropertyDetail,jdbcType=VARCHAR},
+      pet_varity = #{petVarity,jdbcType=VARCHAR},
+      from_frozen_no = #{fromFrozenNo,jdbcType=VARCHAR},
+      to_frozen_no = #{toFrozenNo,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

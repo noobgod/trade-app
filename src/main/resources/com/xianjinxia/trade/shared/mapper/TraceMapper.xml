@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TraceMapper">
+    <resultMap type="com.xianjinxia.trade.shared.domain.Trace" id="BaseResultMap">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="trace_no" property="traceNo" jdbcType="VARCHAR"/>
+        <result column="order_event" property="orderEvent" jdbcType="VARCHAR"/>
+        <result column="event_text" property="eventText" jdbcType="VARCHAR"/>
+        <result column="event_time" property="eventTime" jdbcType="TIMESTAMP"/>
+        <result column="trace_data" property="traceData" jdbcType="VARCHAR"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="data_valid" property="dataValid" jdbcType="TINYINT"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="created_user" property="createdUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.Trace" useGeneratedKeys="true" keyProperty="id">
+        insert into trd_trace (trace_no,order_event,event_text,event_time,trace_data,created_time,updated_time)
+        values (
+        #{traceNo,jdbcType=VARCHAR},
+        #{orderEvent,jdbcType=VARCHAR},
+        #{eventText,jdbcType=VARCHAR},
+        #{eventTime,jdbcType=TIMESTAMP},
+        #{traceData,jdbcType=VARCHAR},
+        NOW(),
+        NOW()
+        )
+    </insert>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+            id,trace_no,order_event,event_time,trace_data,created_time,
+            data_valid,updated_time,created_user,event_text
+        from trd_trace
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectTraceNoCount" resultType="java.lang.Integer">
+        select count(1)
+        from trd_trace where trace_no = #{traceNo,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByUserIdAndOrderId" resultMap="BaseResultMap" parameterType="com.xianjinxia.trade.app.dto.TraceDto">
+        SELECT
+        t.*
+        FROM
+        trd_trace t,
+        trd_loan_order lo
+        WHERE
+        t.trace_no = lo.trace_no
+        AND
+        lo.id = #{loanOrderId}
+        AND lo.user_id = #{userId}
+        AND t.data_valid = 1 order by t.id desc
+    </select>
+    
+    <select id="selectTraceListByOrderNo" resultMap="BaseResultMap" parameterType="com.xianjinxia.trade.platform.request.TraceReq">
+	      select t1.id,t1.trace_no,t1.order_event,t1.event_time,t1.trace_data,t1.created_time,
+	             t1.data_valid,t1.updated_time,t1.created_user,t1.event_text 
+	      from trd_trace t1,trd_platform_loan_order t2
+	      WHERE t1.trace_no = t2.trace_no
+	      AND t2.order_no=#{orderNo} and t2.user_id=#{userId} and t1.data_valid=1
+	      order by t1.id desc
+    </select>
+    
+</mapper>

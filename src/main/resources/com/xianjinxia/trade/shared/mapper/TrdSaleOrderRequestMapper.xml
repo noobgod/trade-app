@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianjinxia.trade.shared.mapper.TrdSaleOrderRequestMapper">
+  <resultMap id="BaseResultMap" type="com.xianjinxia.trade.shared.domain.TrdSaleOrderRequest">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sale_no" jdbcType="VARCHAR" property="saleNo" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="pet_id" jdbcType="BIGINT" property="petId" />
+    <result column="pet_code" jdbcType="VARCHAR" property="petCode" />
+    <result column="pet_frozen_no" jdbcType="VARCHAR" property="petFrozenNo" />
+    <result column="pet_name" jdbcType="VARCHAR" property="petName" />
+    <result column="pet_img" jdbcType="VARCHAR" property="petImg" />
+    <result column="pet_generate_level" jdbcType="VARCHAR" property="petGenerateLevel" />
+    <result column="pet_property_detail" jdbcType="VARCHAR" property="petPropertyDetail" />
+    <result column="pet_varity" jdbcType="VARCHAR" property="petVarity" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_frozen_no, pet_name, pet_img, pet_generate_level,
+    pet_property_detail, pet_varity, price, status, apply_time, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from trd_sale_order_request
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByStatus" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_name, pet_img, pet_generate_level,
+    pet_varity, price, apply_time
+    from trd_sale_order_request
+    where status = #{status,jdbcType=VARCHAR}
+    <if test="sortBy != null and sortBy != ''">
+      order by ${sortBy}
+    </if>
+  </select>
+
+  <select id="selectByStatusPrices" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_name, pet_img, pet_generate_level,
+    pet_varity, price, status, apply_time
+    from trd_sale_order_request
+    where status = #{status,jdbcType=VARCHAR}
+    and price &gt; #{lowPrice,jdbcType=DECIMAL}
+    and price &lt;= #{highPrice,jdbcType=DECIMAL}
+    <if test="sortBy != null and sortBy != ''">
+      order by ${sortBy}
+    </if>
+  </select>
+
+  <select id="selectCntByStatusPrices" resultType="int">
+    select
+      count(1)
+    from trd_sale_order_request
+    where status = #{status,jdbcType=VARCHAR}
+    and price &gt; #{lowPrice,jdbcType=DECIMAL}
+    and price &lt;= #{highPrice,jdbcType=DECIMAL}
+    <if test="sortBy != null and sortBy != ''">
+      order by ${sortBy}
+    </if>
+  </select>
+
+  <select id="selectUserSalePet" resultMap="BaseResultMap">
+    select
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_frozen_no, pet_name, pet_img, pet_generate_level,
+    pet_varity, price, apply_time, status, pet_property_detail
+    from trd_sale_order_request
+    where
+     pet_id = #{petId,jdbcType=BIGINT}
+    and user_id = #{userId,jdbcType=BIGINT}
+    order by apply_time desc
+    limit 1
+  </select>
+
+  <select id="selectSaleBySaleNoUserId" resultMap="BaseResultMap">
+    select
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_frozen_no, pet_name, pet_img, pet_generate_level,
+    pet_varity, price, apply_time, status, pet_property_detail
+    from trd_sale_order_request
+    where
+    sale_no = #{saleNo,jdbcType=VARCHAR}
+    and user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectSaleBySaleNo" resultMap="BaseResultMap">
+    select
+    id, sale_no, user_id, user_name, pet_id, pet_code, pet_frozen_no, pet_name, pet_img, pet_generate_level,
+    pet_varity, price, apply_time, status, pet_property_detail
+    from trd_sale_order_request
+    where
+    sale_no = #{saleNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from trd_sale_order_request
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.xianjinxia.trade.shared.domain.TrdSaleOrderRequest">
+    insert into trd_sale_order_request (id, sale_no, user_id, 
+      user_name, pet_id, pet_code, pet_frozen_no,
+      pet_name, pet_img, pet_generate_level, 
+      pet_property_detail, pet_varity, price, 
+      status, apply_time, remark
+      )
+    values (#{id,jdbcType=BIGINT}, #{saleNo,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+      #{userName,jdbcType=VARCHAR}, #{petId,jdbcType=BIGINT}, #{petCode,jdbcType=VARCHAR}, #{petFrozenNo,jdbcType=VARCHAR},
+      #{petName,jdbcType=VARCHAR}, #{petImg,jdbcType=VARCHAR}, #{petGenerateLevel,jdbcType=VARCHAR}, 
+      #{petPropertyDetail,jdbcType=VARCHAR}, #{petVarity,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+      #{status,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xianjinxia.trade.shared.domain.TrdSaleOrderRequest">
+    insert into trd_sale_order_request
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="saleNo != null">
+        sale_no,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="petId != null">
+        pet_id,
+      </if>
+      <if test="petCode != null">
+        pet_code,
+      </if>
+      <if test="petFrozenNo != null">
+        pet_frozen_no,
+      </if>
+      <if test="petName != null">
+        pet_name,
+      </if>
+      <if test="petImg != null">
+        pet_img,
+      </if>
+      <if test="petGenerateLevel != null">
+        pet_generate_level,
+      </if>
+      <if test="petPropertyDetail != null">
+        pet_property_detail,
+      </if>
+      <if test="petVarity != null">
+        pet_varity,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="applyTime != null">
+        apply_time,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="saleNo != null">
+        #{saleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="petId != null">
+        #{petId,jdbcType=BIGINT},
+      </if>
+      <if test="petCode != null">
+        #{petCode,jdbcType=VARCHAR},
+      </if>
+      <if test="petFrozenNo != null">
+        #{petFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="petName != null">
+        #{petName,jdbcType=VARCHAR},
+      </if>
+      <if test="petImg != null">
+        #{petImg,jdbcType=VARCHAR},
+      </if>
+      <if test="petGenerateLevel != null">
+        #{petGenerateLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="petPropertyDetail != null">
+        #{petPropertyDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="petVarity != null">
+        #{petVarity,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null">
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xianjinxia.trade.shared.domain.TrdSaleOrderRequest">
+    update trd_sale_order_request
+    <set>
+      <if test="saleNo != null">
+        sale_no = #{saleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="petId != null">
+        pet_id = #{petId,jdbcType=BIGINT},
+      </if>
+      <if test="petFrozenNo != null">
+        pet_frozen_no = #{petFrozenNo,jdbcType=VARCHAR},
+      </if>
+      <if test="petName != null">
+        pet_name = #{petName,jdbcType=VARCHAR},
+      </if>
+      <if test="petImg != null">
+        pet_img = #{petImg,jdbcType=VARCHAR},
+      </if>
+      <if test="petGenerateLevel != null">
+        pet_generate_level = #{petGenerateLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="petPropertyDetail != null">
+        pet_property_detail = #{petPropertyDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="petVarity != null">
+        pet_varity = #{petVarity,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null">
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateByUserSaleNo">
+    update trd_sale_order_request
+    <set>
+        status = #{curStatus,jdbcType=VARCHAR}
+    </set>
+    where user_id = #{userId,jdbcType=BIGINT}
+     and sale_no = #{saleNo,jdbcType=VARCHAR}
+     and status = #{preStatus,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xianjinxia.trade.shared.domain.TrdSaleOrderRequest">
+    update trd_sale_order_request
+    set sale_no = #{saleNo,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_name = #{userName,jdbcType=VARCHAR},
+      pet_id = #{petId,jdbcType=BIGINT},
+      pet_frozen_no = #{petFrozenNo,jdbcType=VARCHAR},
+      pet_name = #{petName,jdbcType=VARCHAR},
+      pet_img = #{petImg,jdbcType=VARCHAR},
+      pet_generate_level = #{petGenerateLevel,jdbcType=VARCHAR},
+      pet_property_detail = #{petPropertyDetail,jdbcType=VARCHAR},
+      pet_varity = #{petVarity,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      status = #{status,jdbcType=VARCHAR},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
